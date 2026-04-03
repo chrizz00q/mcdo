@@ -155,24 +155,6 @@
       margin: 0 auto;
     }
 
-    /* Offline Status */
-    .offline-status {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: #e74c3c;
-      color: white;
-      text-align: center;
-      padding: 0.4rem;
-      font-size: 0.75rem;
-      font-weight: 500;
-      transform: translateY(-100%);
-      transition: transform 0.3s ease;
-      z-index: 1500;
-    }
-    .offline-status.show { transform: translateY(0); }
-
     /* Theme Toggle Button with smooth animation */
     .theme-toggle {
       position: fixed;
@@ -499,7 +481,6 @@
   </style>
 </head>
 <body>
-  <div class="offline-status" id="offlineStatus">📴 Offline mode — data saved locally</div>
   <div class="install-prompt" id="installPrompt">
     📱 Install this app on your home screen for offline use!<br>
     <button onclick="document.getElementById('installPrompt').classList.remove('show');localStorage.setItem('installPromptDismissed','true')">Got it</button>
@@ -828,12 +809,6 @@
       const btn = document.getElementById('themeToggleBtn');
       if(btn) btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
     };
-
-    const updateOffline = () => { 
-      const el = document.getElementById('offlineStatus'); 
-      if(!navigator.onLine) el.classList.add('show'); 
-      else el.classList.remove('show'); 
-    };
     
     // Show install prompt for iOS
     const showInstallPrompt = () => {
@@ -846,10 +821,6 @@
       }
     };
     
-    window.addEventListener('online', updateOffline);
-    window.addEventListener('offline', updateOffline);
-    updateOffline();
-
     document.addEventListener("DOMContentLoaded", () => {
       loadData();
       initTheme();
