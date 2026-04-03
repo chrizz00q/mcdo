@@ -9,14 +9,14 @@
   <meta name="theme-color" content="#2c3e50">
   <meta name="description" content="Work hours tracker with salary calculator - works offline">
   
-  <title>mcdo</title>
+  <title>mcdo · Work Logger</title>
   
   <!-- PWA Icons -->
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232c3e50'/%3E%3Ctext x='50' y='67' font-size='50' text-anchor='middle' fill='white' font-family='Arial'%3E📅%3C/text%3E%3C/svg%3E">
   <link rel="manifest" href="manifest.json">
   
   <style>
-    /* ==================== CSS ==================== */
+    /* ==================== MODERN DESIGN (based on original logic) ==================== */
     * {
       margin: 0;
       padding: 0;
@@ -24,7 +24,6 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Light Mode (Default) */
     :root {
       --bg-primary: linear-gradient(135deg, #f5f9ff 0%, #eef2f8 100%);
       --bg-card: rgba(255, 255, 255, 0.98);
@@ -55,7 +54,6 @@
       --radio-bg: #f8fafc;
     }
 
-    /* Dark Mode */
     [data-theme="dark"] {
       --bg-primary: linear-gradient(135deg, #1a1f2e 0%, #0f1219 100%);
       --bg-card: rgba(30, 35, 48, 0.98);
@@ -95,9 +93,7 @@
     }
 
     @media (min-width: 768px) {
-      body {
-        padding: 1.5rem;
-      }
+      body { padding: 1.5rem; }
     }
 
     .dashboard {
@@ -105,7 +101,6 @@
       margin: 0 auto;
     }
 
-    /* Offline Status */
     .offline-status {
       position: fixed;
       top: 0;
@@ -121,19 +116,14 @@
       transition: transform 0.3s ease;
       z-index: 1500;
     }
+    .offline-status.show { transform: translateY(0); }
 
-    .offline-status.show {
-      transform: translateY(0);
-    }
-
-    /* Theme Toggle Button */
     .theme-toggle {
       position: fixed;
       bottom: 1.5rem;
       right: 1.5rem;
       z-index: 1000;
     }
-
     .theme-toggle-btn {
       width: 52px;
       height: 52px;
@@ -150,22 +140,8 @@
       backdrop-filter: blur(10px);
       color: var(--text-primary);
     }
+    .theme-toggle-btn:active { transform: scale(0.92); }
 
-    .theme-toggle-btn:active {
-      transform: scale(0.92);
-    }
-
-    @media (min-width: 768px) {
-      .theme-toggle {
-        bottom: 2rem;
-        right: 2rem;
-      }
-      .theme-toggle-btn:hover {
-        transform: scale(1.05);
-      }
-    }
-
-    /* Calendar Card */
     .calendar-card {
       background: var(--bg-card);
       border-radius: 1.5rem;
@@ -174,15 +150,6 @@
       margin-bottom: 1.25rem;
       transition: all 0.3s ease;
     }
-
-    @media (min-width: 768px) {
-      .calendar-card {
-        border-radius: 2rem;
-        margin-bottom: 1.5rem;
-      }
-    }
-
-    /* Header */
     .calendar-header {
       background: var(--bg-header);
       padding: 1rem 1.25rem;
@@ -192,16 +159,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 0.75rem;
-      transition: background 0.3s ease;
     }
-
-    @media (min-width: 768px) {
-      .calendar-header {
-        padding: 1.25rem 1.8rem;
-        gap: 1rem;
-      }
-    }
-
     .month-year {
       font-size: 1.35rem;
       font-weight: 700;
@@ -209,126 +167,55 @@
       background-clip: text;
       -webkit-background-clip: text;
       color: transparent;
-      letter-spacing: -0.3px;
     }
-
-    @media (min-width: 768px) {
-      .month-year {
-        font-size: 1.7rem;
-      }
-    }
-
-    .nav-buttons {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
+    @media (min-width: 768px) { .month-year { font-size: 1.7rem; } }
+    .nav-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; }
     .nav-btn {
       background: var(--btn-bg);
       border: none;
-      font-size: 0.85rem;
       font-weight: 600;
       padding: 0.5rem 1rem;
       border-radius: 2rem;
       cursor: pointer;
       transition: all 0.2s ease;
       color: var(--text-primary);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      touch-action: manipulation;
+      font-size: 0.85rem;
     }
+    .nav-btn:active { transform: scale(0.96); background: var(--btn-hover); }
+    .today-btn { background: var(--btn-today); color: white; }
+    .today-btn:active { background: var(--btn-today-hover); }
 
-    @media (min-width: 768px) {
-      .nav-btn {
-        font-size: 1rem;
-        padding: 0.5rem 1.2rem;
-      }
-    }
-
-    .nav-btn:active {
-      transform: scale(0.96);
-      background: var(--btn-hover);
-    }
-
-    .today-btn {
-      background: var(--btn-today);
-      color: white;
-    }
-
-    .today-btn:active {
-      background: var(--btn-today-hover);
-    }
-
-    /* Weekdays */
     .weekdays {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       background: var(--weekday-bg);
       padding: 0.6rem 0;
       border-bottom: 1px solid var(--border-color);
-      transition: background 0.3s ease;
-    }
-
-    @media (min-width: 768px) {
-      .weekdays {
-        padding: 0.8rem 0;
-      }
-    }
-
-    .weekday {
       text-align: center;
       font-weight: 600;
       font-size: 0.7rem;
       color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
     }
+    @media (min-width: 768px) { .weekday { font-size: 0.85rem; } }
 
-    @media (min-width: 768px) {
-      .weekday {
-        font-size: 0.85rem;
-      }
-    }
-
-    /* Calendar Grid */
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       background: var(--cell-bg);
     }
-
     .calendar-cell {
       aspect-ratio: 1 / 0.95;
       min-height: 85px;
       padding: 0.4rem;
       border-right: 1px solid var(--cell-border);
       border-bottom: 1px solid var(--cell-border);
-      transition: all 0.15s ease;
+      cursor: pointer;
       display: flex;
       flex-direction: column;
-      cursor: pointer;
       background: var(--cell-bg);
-      touch-action: manipulation;
+      transition: 0.1s;
     }
-
-    @media (min-width: 768px) {
-      .calendar-cell {
-        min-height: 105px;
-        padding: 0.6rem;
-      }
-    }
-
-    .calendar-cell:nth-child(7n) {
-      border-right: none;
-    }
-
-    .calendar-cell:active {
-      background: var(--cell-hover);
-      transform: scale(0.98);
-    }
-
+    .calendar-cell:active { background: var(--cell-hover); transform: scale(0.98); }
     .day-number {
       font-size: 0.9rem;
       font-weight: 600;
@@ -338,30 +225,12 @@
       align-items: center;
       justify-content: center;
       border-radius: 2rem;
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.2rem;
       color: var(--text-primary);
     }
+    .today .day-number { background: var(--btn-today); color: white; box-shadow: 0 2px 6px var(--shadow); }
+    .other-month .day-number { color: var(--text-muted); }
 
-    @media (min-width: 768px) {
-      .day-number {
-        font-size: 1rem;
-        width: 2rem;
-        height: 2rem;
-        margin-bottom: 0.4rem;
-      }
-    }
-
-    .today .day-number {
-      background: var(--btn-today);
-      color: white;
-      box-shadow: 0 2px 6px var(--shadow);
-    }
-
-    .other-month .day-number {
-      color: var(--text-muted);
-    }
-
-    /* Entry Badge */
     .entry-badge {
       background: var(--badge-bg);
       border-radius: 0.75rem;
@@ -372,53 +241,16 @@
       margin-top: 0.2rem;
       border-left: 3px solid;
       word-break: break-word;
-      line-height: 1.2;
       color: var(--text-primary);
     }
+    .entry-badge.normal { border-left-color: #2c7da0; background: var(--badge-normal); }
+    .entry-badge.extended { border-left-color: #e67e22; background: var(--badge-extended); }
+    .entry-badge.holiday { border-left-color: #e74c3c; background: var(--badge-holiday); }
+    .entry-badge.restday { border-left-color: #27ae60; background: var(--badge-rd); }
+    .entry-badge.ea { border-left-color: #95a5a6; background: var(--badge-ea); }
 
-    @media (min-width: 768px) {
-      .entry-badge {
-        font-size: 0.7rem;
-        padding: 0.25rem 0.5rem;
-        margin-top: 0.25rem;
-      }
-    }
+    .edit-hint { font-size: 0.55rem; color: var(--text-muted); margin-top: 0.2rem; text-align: center; }
 
-    .entry-badge.normal {
-      border-left-color: #2c7da0;
-      background: var(--badge-normal);
-    }
-    .entry-badge.extended {
-      border-left-color: #e67e22;
-      background: var(--badge-extended);
-    }
-    .entry-badge.holiday {
-      border-left-color: #e74c3c;
-      background: var(--badge-holiday);
-    }
-    .entry-badge.restday {
-      border-left-color: #27ae60;
-      background: var(--badge-rd);
-    }
-    .entry-badge.ea {
-      border-left-color: #95a5a6;
-      background: var(--badge-ea);
-    }
-
-    .edit-hint {
-      font-size: 0.55rem;
-      color: var(--text-muted);
-      margin-top: 0.2rem;
-      text-align: center;
-    }
-
-    @media (min-width: 768px) {
-      .edit-hint {
-        font-size: 0.6rem;
-      }
-    }
-
-    /* Salary Panel */
     .salary-panel {
       background: var(--bg-card);
       border-radius: 1.25rem;
@@ -427,18 +259,9 @@
       flex-direction: column;
       gap: 0.75rem;
       box-shadow: 0 8px 20px var(--shadow-sm);
-      transition: background 0.3s ease;
+      margin-bottom: 1rem;
     }
-
-    @media (min-width: 768px) {
-      .salary-panel {
-        flex-direction: row;
-        padding: 1.2rem 1.8rem;
-        gap: 1rem;
-        justify-content: space-between;
-        align-items: center;
-      }
-    }
+    @media (min-width: 768px) { .salary-panel { flex-direction: row; align-items: center; justify-content: space-between; } }
 
     .cutoff-card {
       background: var(--cutoff-bg);
@@ -446,109 +269,48 @@
       padding: 0.85rem 1rem;
       flex: 1;
       border-left: 4px solid;
-      transition: transform 0.2s;
     }
-
-    @media (min-width: 768px) {
-      .cutoff-card {
-        padding: 1rem 1.5rem;
-      }
-    }
-
-    .cutoff-card:active {
-      transform: scale(0.98);
-    }
-
-    .cutoff-card.first {
-      border-left-color: #2c7da0;
-    }
-    .cutoff-card.second {
-      border-left-color: #5a6e8a;
-    }
-
-    .cutoff-title {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: var(--text-secondary);
-      margin-bottom: 0.4rem;
-    }
-
-    @media (min-width: 768px) {
-      .cutoff-title {
-        font-size: 0.85rem;
-        margin-bottom: 0.5rem;
-      }
-    }
-
-    .cutoff-hours {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    @media (min-width: 768px) {
-      .cutoff-hours {
-        font-size: 1.8rem;
-      }
-    }
-
-    .cutoff-hours small {
-      font-size: 0.7rem;
-      font-weight: 400;
-    }
-
-    .cutoff-salary {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #2c7da0;
-      margin-top: 0.2rem;
-    }
-
-    @media (min-width: 768px) {
-      .cutoff-salary {
-        font-size: 1.3rem;
-        margin-top: 0.3rem;
-      }
-    }
-
-    .rate-info {
-      font-size: 0.6rem;
-      color: var(--text-muted);
-      margin-top: 0.25rem;
-    }
-
-    @media (min-width: 768px) {
-      .rate-info {
-        font-size: 0.7rem;
-      }
-    }
+    .cutoff-card.first { border-left-color: #2c7da0; }
+    .cutoff-card.second { border-left-color: #5a6e8a; }
+    .cutoff-title { font-size: 0.7rem; text-transform: uppercase; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.4rem; }
+    .cutoff-hours { font-size: 1.4rem; font-weight: 700; color: var(--text-primary); }
+    .cutoff-salary { font-size: 1.1rem; font-weight: 700; color: #2c7da0; margin-top: 0.2rem; }
+    .rate-info { font-size: 0.6rem; color: var(--text-muted); margin-top: 0.25rem; }
 
     .reset-btn {
       background: var(--btn-bg);
       border: none;
       padding: 0.6rem 1rem;
       border-radius: 2rem;
-      font-size: 0.75rem;
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.2s;
-      touch-action: manipulation;
       color: var(--text-primary);
+      font-size: 0.75rem;
+      transition: 0.2s;
     }
+    .reset-btn:active { transform: scale(0.96); background: var(--btn-hover); }
 
-    @media (min-width: 768px) {
-      .reset-btn {
-        padding: 0.6rem 1.2rem;
-        font-size: 0.8rem;
-      }
+    /* Legend */
+    .legend-bar {
+      background: var(--bg-card);
+      border-radius: 1rem;
+      padding: 0.8rem 1rem;
+      margin-top: 0.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      font-size: 0.7rem;
+      color: var(--text-secondary);
     }
-
-    .reset-btn:active {
-      transform: scale(0.96);
-      background: var(--btn-hover);
+    .legend-dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+      margin-right: 5px;
     }
+    .legend-item { display: inline-flex; align-items: center; gap: 4px; margin-right: 12px; }
 
     /* Modal */
     .modal {
@@ -568,12 +330,7 @@
       transition: 0.2s ease;
       padding: 1rem;
     }
-
-    .modal.active {
-      visibility: visible;
-      opacity: 1;
-    }
-
+    .modal.active { visibility: visible; opacity: 1; }
     .modal-content {
       background: var(--modal-bg);
       border-radius: 1.5rem;
@@ -582,137 +339,35 @@
       padding: 1.5rem;
       box-shadow: 0 25px 50px -12px var(--shadow);
       animation: modalSlideIn 0.25s ease;
-      transition: background 0.3s ease;
     }
-
     @keyframes modalSlideIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-
-    @media (min-width: 768px) {
-      .modal-content {
-        padding: 1.8rem;
-        border-radius: 2rem;
-      }
-    }
-
-    .modal-content h3 {
-      margin-bottom: 0.25rem;
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    @media (min-width: 768px) {
-      .modal-content h3 {
-        font-size: 1.3rem;
-      }
-    }
-
-    .date-sub {
-      color: var(--text-secondary);
-      font-size: 0.75rem;
-      margin-bottom: 1rem;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 0.5rem;
-    }
-
-    @media (min-width: 768px) {
-      .date-sub {
-        font-size: 0.85rem;
-        margin-bottom: 1.25rem;
-      }
-    }
-
-    .input-group {
-      margin-bottom: 1rem;
-    }
-
-    .input-group label {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 0.4rem;
-    }
-
-    @media (min-width: 768px) {
-      .input-group label {
-        font-size: 0.8rem;
-      }
-    }
-
+    .input-group { margin-bottom: 1rem; }
+    .input-group label { font-size: 0.75rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.4rem; display: block; }
     .hours-input {
       width: 100%;
       padding: 0.7rem;
       border: 2px solid var(--input-border);
       border-radius: 1.2rem;
       font-size: 1rem;
-      font-weight: 500;
       text-align: center;
-      transition: border-color 0.2s;
       background: var(--cell-bg);
       color: var(--text-primary);
     }
-
-    .hours-input:focus {
-      outline: none;
-      border-color: #2c7da0;
-    }
-
-    .hours-total-hint {
-      font-size: 0.65rem;
-      text-align: center;
-      margin-top: 0.25rem;
-      color: var(--text-secondary);
-    }
-
-    .radio-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-top: 0.3rem;
-    }
-
+    .radio-group { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.3rem; }
     .radio-group label {
       display: flex;
       align-items: center;
       gap: 0.35rem;
-      font-weight: normal;
       font-size: 0.75rem;
-      cursor: pointer;
       padding: 0.25rem 0.5rem;
       border-radius: 1.5rem;
       background: var(--radio-bg);
-      transition: background 0.2s;
       color: var(--text-primary);
     }
-
-    @media (min-width: 768px) {
-      .radio-group label {
-        font-size: 0.85rem;
-        gap: 0.5rem;
-      }
-    }
-
-    .radio-group label:active {
-      background: var(--btn-hover);
-    }
-
-    .code-buttons {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-      flex-wrap: wrap;
-    }
-
+    .code-buttons { display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
     .code-btn {
       background: var(--btn-bg);
       border: 1px solid var(--input-border);
@@ -721,91 +376,20 @@
       font-size: 0.7rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.15s;
-      touch-action: manipulation;
       flex: 1;
-      min-width: 90px;
+      text-align: center;
       color: var(--text-primary);
     }
-
-    @media (min-width: 768px) {
-      .code-btn {
-        padding: 0.5rem 1rem;
-        font-size: 0.75rem;
-        flex: initial;
-      }
-    }
-
-    .code-btn:active {
-      transform: scale(0.96);
-      background: var(--btn-hover);
-    }
-
-    .modal-buttons {
-      display: flex;
-      gap: 0.75rem;
-      justify-content: flex-end;
-      margin-top: 1.25rem;
-    }
-
-    .modal-btn {
-      padding: 0.6rem 1.2rem;
-      border-radius: 2rem;
-      border: none;
-      font-weight: 600;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: all 0.15s;
-      touch-action: manipulation;
-    }
-
-    .modal-btn:active {
-      transform: scale(0.96);
-    }
-
-    .save-btn {
-      background: #2c7da0;
-      color: white;
-    }
-
-    .cancel-btn {
-      background: var(--btn-bg);
-      color: var(--text-primary);
-    }
-
-    hr {
-      margin: 0.8rem 0;
-      border: none;
-      border-top: 1px solid var(--border-color);
-    }
-
-    /* Scroll & Touch Improvements */
-    .calendar-grid {
-      -webkit-overflow-scrolling: touch;
-    }
-
-    button, .calendar-cell, .code-btn, .modal-btn {
-      cursor: pointer;
-      user-select: none;
-    }
-
-    /* Better touch targets */
-    .nav-btn, .reset-btn, .code-btn, .modal-btn {
-      min-height: 40px;
-    }
-
-    @media (max-width: 480px) {
-      .nav-btn, .reset-btn {
-        min-height: 36px;
-      }
-    }
+    .code-btn:active { transform: scale(0.96); }
+    .modal-buttons { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.25rem; }
+    .modal-btn { padding: 0.6rem 1.2rem; border-radius: 2rem; font-weight: 600; cursor: pointer; border: none; }
+    .save-btn { background: #2c7da0; color: white; }
+    .cancel-btn { background: var(--btn-bg); color: var(--text-primary); }
+    hr { margin: 0.8rem 0; border-color: var(--border-color); }
   </style>
 </head>
 <body>
-  <div class="offline-status" id="offlineStatus">
-    📴 You're offline - app still works!
-  </div>
-
+  <div class="offline-status" id="offlineStatus">📴 Offline mode — data saved locally</div>
   <div class="dashboard">
     <div class="calendar-card">
       <div class="calendar-header">
@@ -816,324 +400,152 @@
           <button class="nav-btn" id="nextMonthBtn">Next →</button>
         </div>
       </div>
-      <div class="weekdays">
-        <div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div>
-        <div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div>
-        <div class="weekday">Sun</div>
-      </div>
+      <div class="weekdays"><div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div><div class="weekday">Sun</div></div>
       <div id="calendarGrid" class="calendar-grid"></div>
     </div>
 
     <div class="salary-panel">
-      <div class="cutoff-card first" id="firstCutoffCard">
-        <div class="cutoff-title">📆 FIRST CUT-OFF (Days 1–15)</div>
-        <div class="cutoff-hours" id="firstHours">0.0 <small>hrs</small></div>
-        <div class="cutoff-salary" id="firstSalary">₱ 0.00</div>
-        <div class="rate-info">💰 Base ₱86/hr | Extended ₱86/hr | Holiday +30% | Double Pay 2x</div>
-      </div>
-      <div class="cutoff-card second" id="secondCutoffCard">
-        <div class="cutoff-title">📆 SECOND CUT-OFF (Days 16–31/30)</div>
-        <div class="cutoff-hours" id="secondHours">0.0 <small>hrs</small></div>
-        <div class="cutoff-salary" id="secondSalary">₱ 0.00</div>
-        <div class="rate-info">💰 Normal, Extended, Holiday +30%, or Double Pay</div>
-      </div>
+      <div class="cutoff-card first"><div class="cutoff-title">📆 FIRST CUT-OFF (Days 1–15)</div><div class="cutoff-hours" id="firstHours">0.0 <small>hrs</small></div><div class="cutoff-salary" id="firstSalary">₱ 0.00</div></div>
+      <div class="cutoff-card second"><div class="cutoff-title">📆 SECOND CUT-OFF (Days 16–31)</div><div class="cutoff-hours" id="secondHours">0.0 <small>hrs</small></div><div class="cutoff-salary" id="secondSalary">₱ 0.00</div></div>
       <button class="reset-btn" id="resetAllDataBtn">🗑️ Reset All Data</button>
+    </div>
+
+    <div class="legend-bar">
+      <span class="legend-item"><span class="legend-dot" style="background:#2c7da0;"></span> Normal</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#e67e22;"></span> Extended+</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#e74c3c;"></span> Holiday / Double</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#27ae60;"></span> RD (Rest Day)</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#95a5a6;"></span> EA (Excused)</span>
+      <span class="legend-item">💰 Base ₱86 | +30% | 2x</span>
     </div>
   </div>
 
-  <!-- Enhanced Modal with Dual Hours Input -->
   <div id="editModal" class="modal">
     <div class="modal-content">
-      <h3 id="modalDateLabel">📅 Date</h3>
-      <div class="date-sub" id="modalDateSub">Set normal & extended hours</div>
-      
-      <div class="input-group">
-        <label>⏱️ Normal Hours (₱86/hr)</label>
-        <input type="number" id="normalHoursInput" class="hours-input" step="0.5" placeholder="e.g., 8, 7.5, 0" value="0">
-      </div>
-      
-      <div class="input-group">
-        <label>⚡ Extended Hours (₱86/hr)</label>
-        <input type="number" id="extendedHoursInput" class="hours-input" step="0.5" placeholder="e.g., 2, 3.5, 0" value="0">
-        <div class="hours-total-hint">Extra hours at same ₱86/hr rate</div>
-      </div>
-
-      <div class="input-group">
-        <label>✨ Special Rate (applies to ALL hours on this day)</label>
-        <div class="radio-group" id="rateTypeGroup">
-          <label><input type="radio" name="rateType" value="normal" checked> Normal (1x)</label>
-          <label><input type="radio" name="rateType" value="holiday"> 🎉 Holiday +30% (1.3x)</label>
-          <label><input type="radio" name="rateType" value="double"> 💰 Double Pay (2x)</label>
-        </div>
-      </div>
-
-      <div class="input-group">
-        <label>📌 Quick Status Codes</label>
-        <div class="code-buttons">
-          <button type="button" class="code-btn" data-code="rd">🟢 RD (Rest Day)</button>
-          <button type="button" class="code-btn" data-code="ea">🟠 EA (Emergency Absent)</button>
-          <button type="button" class="code-btn" data-code="clear">🗑️ Clear Entry</button>
-        </div>
-        <div class="hours-total-hint">⚠️ RD/EA sets all hours to 0 (no salary)</div>
-      </div>
-
-      <div class="modal-buttons">
-        <button class="modal-btn cancel-btn" id="cancelModalBtn">Cancel</button>
-        <button class="modal-btn save-btn" id="saveHoursBtn">💾 Save Entry</button>
-      </div>
+      <h3 id="modalDateLabel" style="color:var(--text-primary)">📅 Date</h3>
+      <div class="date-sub" style="color:var(--text-muted); margin-bottom:1rem" id="modalDateSub">Set normal & extended hours</div>
+      <div class="input-group"><label>⏱️ Normal Hours (₱86/hr)</label><input type="number" id="normalHoursInput" class="hours-input" step="0.5" placeholder="e.g., 8, 7.5" value="0"></div>
+      <div class="input-group"><label>⚡ Extended Hours (₱86/hr)</label><input type="number" id="extendedHoursInput" class="hours-input" step="0.5" placeholder="e.g., 2, 3.5" value="0"><div class="hours-total-hint" style="font-size:0.65rem; color:var(--text-muted); margin-top:4px">Extra hours at same base rate</div></div>
+      <div class="input-group"><label>✨ Special Rate (applies to ALL hours this day)</label><div class="radio-group" id="rateTypeGroup"><label><input type="radio" name="rateType" value="normal" checked> Normal (1x)</label><label><input type="radio" name="rateType" value="holiday"> 🎉 Holiday +30% (1.3x)</label><label><input type="radio" name="rateType" value="double"> 💰 Double Pay (2x)</label></div></div>
+      <div class="input-group"><label>📌 Quick Codes</label><div class="code-buttons"><button type="button" class="code-btn" data-code="rd">🟢 RD (Rest Day)</button><button type="button" class="code-btn" data-code="ea">🟠 EA (Absent)</button><button type="button" class="code-btn" data-code="clear">🗑️ Clear Entry</button></div><div class="hours-total-hint" style="font-size:0.6rem; margin-top:6px">⚠️ RD/EA sets hours to 0, no salary</div></div>
+      <div class="modal-buttons"><button class="modal-btn cancel-btn" id="cancelModalBtn">Cancel</button><button class="modal-btn save-btn" id="saveHoursBtn">💾 Save Entry</button></div>
     </div>
   </div>
 
   <script>
-    // ==================== JAVASCRIPT ====================
+    // ---------- CONSTANTS ----------
     const BASE_RATE = 86.00;
     const HOLIDAY_MULTIPLIER = 1.30;
-    const DOUBLE_PAY_MULTIPLIER = 2.0;
+    const DOUBLE_MULTIPLIER = 2.0;
 
     let entriesMap = new Map();
     let currentDisplayYear = new Date().getFullYear();
     let currentDisplayMonth = new Date().getMonth();
 
-    // Offline detection
-    function updateOfflineStatus() {
-      const statusDiv = document.getElementById('offlineStatus');
-      if (!navigator.onLine) {
-        statusDiv.classList.add('show');
-        setTimeout(() => {
-          if (!navigator.onLine) {
-            // Keep showing
-          }
-        }, 3000);
-      } else {
-        statusDiv.classList.remove('show');
-      }
-    }
-
-    window.addEventListener('online', () => {
-      const statusDiv = document.getElementById('offlineStatus');
-      statusDiv.classList.remove('show');
-      setTimeout(() => {
-        alert('🎉 You\'re back online! Your data is safe.');
-      }, 100);
-    });
-    
-    window.addEventListener('offline', () => {
-      document.getElementById('offlineStatus').classList.add('show');
-    });
-
-    updateOfflineStatus();
-
-    // Theme handling
-    function initTheme() {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        updateThemeIcon('dark');
-      } else {
-        document.documentElement.setAttribute('data-theme', 'light');
-        updateThemeIcon('light');
-      }
-    }
-
-    function toggleTheme() {
-      const currentTheme = document.documentElement.getAttribute('data-theme');
-      if (currentTheme === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'light');
-        localStorage.setItem('theme', 'light');
-        updateThemeIcon('light');
-      } else {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
-        updateThemeIcon('dark');
-      }
-    }
-
-    function updateThemeIcon(theme) {
-      const themeBtn = document.getElementById('themeToggleBtn');
-      if (themeBtn) {
-        themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
-      }
-    }
-
-    function formatYMD(year, month, day) {
-      return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    }
-
-    function loadData() {
+    // helpers
+    const formatYMD = (y, m, d) => `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const loadData = () => {
       const saved = localStorage.getItem("workEntriesEnhanced");
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          entriesMap = new Map(Object.entries(parsed));
-        } catch (e) {
-          console.warn(e);
-        }
-      }
-    }
-
-    function persistData() {
-      const obj = Object.fromEntries(entriesMap);
-      localStorage.setItem("workEntriesEnhanced", JSON.stringify(obj));
-    }
-
-    function getEntry(year, month, day) {
-      const key = formatYMD(year, month, day);
-      return entriesMap.get(key) || null;
-    }
-
-    function setEntry(year, month, day, entryData) {
-      const key = formatYMD(year, month, day);
-      if (entryData === null) {
-        entriesMap.delete(key);
-      } else {
-        entriesMap.set(key, {
-          normalHours: parseFloat(entryData.normalHours) || 0,
-          extendedHours: parseFloat(entryData.extendedHours) || 0,
-          rateType: entryData.rateType || "normal",
-          customLabel: entryData.customLabel || null
-        });
-      }
-      persistData();
+      if (saved) try { entriesMap = new Map(Object.entries(JSON.parse(saved))); } catch(e) {}
+    };
+    const persist = () => { localStorage.setItem("workEntriesEnhanced", JSON.stringify(Object.fromEntries(entriesMap))); };
+    const getEntry = (y,m,d) => entriesMap.get(formatYMD(y,m,d)) || null;
+    const setEntry = (y,m,d, data) => {
+      const key = formatYMD(y,m,d);
+      if (data === null) entriesMap.delete(key);
+      else entriesMap.set(key, { ...data, normalHours: data.normalHours||0, extendedHours: data.extendedHours||0 });
+      persist();
       renderCalendar();
       updateSalaryPanels();
-    }
+    };
 
-    function getEffectiveRate(rateType) {
-      if (rateType === "holiday") return BASE_RATE * HOLIDAY_MULTIPLIER;
-      if (rateType === "double") return BASE_RATE * DOUBLE_PAY_MULTIPLIER;
+    const getEffectiveRate = (type) => {
+      if(type === "holiday") return BASE_RATE * HOLIDAY_MULTIPLIER;
+      if(type === "double") return BASE_RATE * DOUBLE_MULTIPLIER;
       return BASE_RATE;
-    }
+    };
+    const getTotalHours = (e) => (e?.normalHours||0) + (e?.extendedHours||0);
+    const calcEntrySalary = (e) => { if(!e) return 0; const hrs = getTotalHours(e); return hrs * getEffectiveRate(e.rateType || "normal"); };
 
-    function getTotalHours(entry) {
-      if (!entry) return 0;
-      return entry.normalHours + entry.extendedHours;
-    }
-
-    function calculateEntrySalary(entry) {
-      if (!entry) return 0;
-      const totalHours = getTotalHours(entry);
-      if (totalHours === 0) return 0;
-      const rate = getEffectiveRate(entry.rateType);
-      return totalHours * rate;
-    }
-
-    function calculateCutoff(year, month, startDay, endDay) {
-      let totalHours = 0;
-      let totalSalary = 0;
-      const lastDate = new Date(year, month + 1, 0).getDate();
-      for (let d = startDay; d <= endDay; d++) {
-        if (d > lastDate) break;
+    const calculateCutoffRange = (year, month, startDay, endDay) => {
+      let totalHours = 0, totalSalary = 0;
+      const lastDate = new Date(year, month+1, 0).getDate();
+      for(let d=startDay; d<=endDay && d<=lastDate; d++) {
         const entry = getEntry(year, month, d);
-        if (entry) {
-          const hours = getTotalHours(entry);
-          if (hours > 0) {
-            totalHours += hours;
-            totalSalary += calculateEntrySalary(entry);
-          }
+        if(entry && getTotalHours(entry)>0) {
+          totalHours += getTotalHours(entry);
+          totalSalary += calcEntrySalary(entry);
         }
       }
       return { totalHours, totalSalary };
-    }
+    };
 
-    function updateSalaryPanels() {
-      const year = currentDisplayYear;
-      const month = currentDisplayMonth;
-      const lastDay = new Date(year, month + 1, 0).getDate();
-
-      const first = calculateCutoff(year, month, 1, 15);
-      const second = calculateCutoff(year, month, 16, lastDay);
-
+    const updateSalaryPanels = () => {
+      const lastDay = new Date(currentDisplayYear, currentDisplayMonth+1, 0).getDate();
+      const first = calculateCutoffRange(currentDisplayYear, currentDisplayMonth, 1, 15);
+      const second = calculateCutoffRange(currentDisplayYear, currentDisplayMonth, 16, lastDay);
       document.getElementById("firstHours").innerHTML = first.totalHours.toFixed(1) + " <small>hrs</small>";
       document.getElementById("firstSalary").innerHTML = `₱ ${first.totalSalary.toFixed(2)}`;
       document.getElementById("secondHours").innerHTML = second.totalHours.toFixed(1) + " <small>hrs</small>";
       document.getElementById("secondSalary").innerHTML = `₱ ${second.totalSalary.toFixed(2)}`;
-    }
+    };
 
-    function renderCalendar() {
-      const year = currentDisplayYear;
-      const month = currentDisplayMonth;
-      const firstDayOfMonth = new Date(year, month, 1);
-      let startWeekday = firstDayOfMonth.getDay();
-      let daysFromPrevMonth = startWeekday === 0 ? 6 : startWeekday - 1;
-
+    const renderCalendar = () => {
+      const year = currentDisplayYear, month = currentDisplayMonth;
+      const firstDay = new Date(year, month, 1);
+      let startWeekday = firstDay.getDay();
+      let daysFromPrev = startWeekday === 0 ? 6 : startWeekday - 1;
       const prevMonthDate = new Date(year, month, 0);
-      const prevMonthDays = prevMonthDate.getDate();
-      const prevMonthYear = prevMonthDate.getFullYear();
-      const prevMonthIdx = prevMonthDate.getMonth();
-      const daysInCurrent = new Date(year, month + 1, 0).getDate();
-      const totalCells = 42;
-      let calendarCells = [];
+      const prevDaysCount = prevMonthDate.getDate();
+      const prevYear = prevMonthDate.getFullYear(), prevMonth = prevMonthDate.getMonth();
+      const daysInCurrent = new Date(year, month+1, 0).getDate();
+      const cells = [];
 
-      for (let i = 0; i < daysFromPrevMonth; i++) {
-        let dayNum = prevMonthDays - daysFromPrevMonth + i + 1;
-        calendarCells.push({ year: prevMonthYear, month: prevMonthIdx, day: dayNum, isCurrent: false });
+      for(let i=0; i<daysFromPrev; i++) {
+        let dayNum = prevDaysCount - daysFromPrev + i + 1;
+        cells.push({ year: prevYear, month: prevMonth, day: dayNum, isCurrent: false });
       }
-      for (let d = 1; d <= daysInCurrent; d++) {
-        calendarCells.push({ year: year, month: month, day: d, isCurrent: true });
-      }
-      let remaining = totalCells - calendarCells.length;
-      let nextDate = new Date(year, month + 1, 1);
-      let nextYear = nextDate.getFullYear();
-      let nextMonthIdx = nextDate.getMonth();
-      for (let i = 1; i <= remaining; i++) {
-        calendarCells.push({ year: nextYear, month: nextMonthIdx, day: i, isCurrent: false });
-      }
+      for(let d=1; d<=daysInCurrent; d++) cells.push({ year, month, day: d, isCurrent: true });
+      let remaining = 42 - cells.length;
+      let next = new Date(year, month+1, 1);
+      for(let i=1; i<=remaining; i++) cells.push({ year: next.getFullYear(), month: next.getMonth(), day: i, isCurrent: false });
 
-      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
       document.getElementById("monthYearDisplay").innerText = `${monthNames[month]} ${year}`;
-
       const grid = document.getElementById("calendarGrid");
       grid.innerHTML = "";
       const today = new Date();
 
-      calendarCells.forEach(cell => {
+      cells.forEach(cell => {
         const cellDiv = document.createElement("div");
         cellDiv.className = "calendar-cell";
-        if (!cell.isCurrent) cellDiv.classList.add("other-month");
-
-        const isToday = (cell.year === today.getFullYear() && cell.month === today.getMonth() && cell.day === today.getDate());
-        if (isToday) cellDiv.classList.add("today");
-
+        if(!cell.isCurrent) cellDiv.classList.add("other-month");
+        const isToday = (cell.year===today.getFullYear() && cell.month===today.getMonth() && cell.day===today.getDate());
+        if(isToday) cellDiv.classList.add("today");
         const daySpan = document.createElement("div");
         daySpan.className = "day-number";
         daySpan.innerText = cell.day;
         cellDiv.appendChild(daySpan);
-
         const entry = getEntry(cell.year, cell.month, cell.day);
-        if (entry) {
+        if(entry) {
           const badge = document.createElement("div");
           badge.className = "entry-badge";
-          
-          if (entry.customLabel === "rd") {
-            badge.innerText = "RD (Rest Day)";
-            badge.classList.add("restday");
-          } else if (entry.customLabel === "ea") {
-            badge.innerText = "EA (Absent)";
-            badge.classList.add("ea");
-          } else {
-            const totalHrs = getTotalHours(entry);
-            if (totalHrs > 0) {
-              let hoursText = `${entry.normalHours.toFixed(1)}hrs`;
-              if (entry.extendedHours > 0) {
-                hoursText += ` +${entry.extendedHours.toFixed(1)}ext`;
-              }
-              
-              if (entry.rateType === "holiday") {
-                hoursText += ` 🎉+30%`;
-                badge.classList.add("holiday");
-              } else if (entry.rateType === "double") {
-                hoursText += ` 💰2x`;
-                badge.classList.add("holiday");
-              } else if (entry.extendedHours > 0) {
-                badge.classList.add("extended");
-              } else {
-                badge.classList.add("normal");
-              }
-              badge.innerText = hoursText;
-            } else {
-              badge.innerText = "0 hrs";
-              badge.classList.add("normal");
-            }
+          if(entry.customLabel === "rd") { badge.innerText = "RD (Rest Day)"; badge.classList.add("restday"); }
+          else if(entry.customLabel === "ea") { badge.innerText = "EA (Excused)"; badge.classList.add("ea"); }
+          else {
+            const normal = entry.normalHours || 0, extended = entry.extendedHours || 0;
+            const total = normal+extended;
+            if(total > 0) {
+              let displayText = "";
+              if(normal>0 && extended>0) displayText = `${normal.toFixed(1)}+${extended.toFixed(1)}`;
+              else if(normal>0) displayText = `${normal.toFixed(1)}`;
+              else displayText = `${extended.toFixed(1)}ext`;
+              if(entry.rateType === "holiday") { displayText += " 🎉+30%"; badge.classList.add("holiday"); }
+              else if(entry.rateType === "double") { displayText += " 💰2x"; badge.classList.add("holiday"); }
+              else if(extended>0) badge.classList.add("extended");
+              else badge.classList.add("normal");
+              badge.innerText = displayText;
+            } else { badge.innerText = "0 hrs"; badge.classList.add("normal"); }
           }
           cellDiv.appendChild(badge);
         } else {
@@ -1142,180 +554,128 @@
           hint.innerText = "tap +";
           cellDiv.appendChild(hint);
         }
-
         cellDiv.addEventListener("click", () => openModal(cell.year, cell.month, cell.day));
         grid.appendChild(cellDiv);
       });
       updateSalaryPanels();
-    }
+    };
 
-    let activeYear = null, activeMonth = null, activeDay = null;
+    let activeYear=null, activeMonth=null, activeDay=null;
     const modal = document.getElementById("editModal");
-    const normalHoursInput = document.getElementById("normalHoursInput");
-    const extendedHoursInput = document.getElementById("extendedHoursInput");
-    const modalDateLabel = document.getElementById("modalDateLabel");
-    const modalDateSub = document.getElementById("modalDateSub");
+    const normalInput = document.getElementById("normalHoursInput");
+    const extendedInput = document.getElementById("extendedHoursInput");
+    const modalTitle = document.getElementById("modalDateLabel");
+    const modalSub = document.getElementById("modalDateSub");
 
-    function openModal(year, month, day) {
-      activeYear = year;
-      activeMonth = month;
-      activeDay = day;
-      const dateObj = new Date(year, month, day);
-      modalDateLabel.innerText = `📅 ${dateObj.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}`;
-      modalDateSub.innerText = `Set normal & extended hours`;
-      
-      const existing = getEntry(year, month, day);
-      if (existing && !existing.customLabel) {
-        normalHoursInput.value = existing.normalHours;
-        extendedHoursInput.value = existing.extendedHours;
-        if (existing.rateType === "holiday") {
-          document.querySelector('input[value="holiday"]').checked = true;
-        } else if (existing.rateType === "double") {
-          document.querySelector('input[value="double"]').checked = true;
-        } else {
-          document.querySelector('input[value="normal"]').checked = true;
-        }
+    const openModal = (y,m,d) => {
+      activeYear=y; activeMonth=m; activeDay=d;
+      const dateObj = new Date(y,m,d);
+      modalTitle.innerText = `📅 ${dateObj.toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' })}`;
+      modalSub.innerText = `Set normal & extended hours`;
+      const existing = getEntry(y,m,d);
+      if(existing && !existing.customLabel) {
+        normalInput.value = existing.normalHours;
+        extendedInput.value = existing.extendedHours;
+        if(existing.rateType === "holiday") document.querySelector('input[value="holiday"]').checked = true;
+        else if(existing.rateType === "double") document.querySelector('input[value="double"]').checked = true;
+        else document.querySelector('input[value="normal"]').checked = true;
       } else {
-        normalHoursInput.value = "";
-        extendedHoursInput.value = "";
+        normalInput.value = "";
+        extendedInput.value = "";
         document.querySelector('input[value="normal"]').checked = true;
       }
       modal.classList.add("active");
-      setTimeout(() => normalHoursInput.focus(), 100);
-    }
-
-    function closeModal() {
-      modal.classList.remove("active");
-      activeYear = null;
-    }
-
-    function saveHours() {
-      if (activeYear === null) return;
-      
-      let normalRaw = normalHoursInput.value.trim();
-      let extendedRaw = extendedHoursInput.value.trim();
-      
-      let normalVal = normalRaw === "" ? 0 : parseFloat(normalRaw);
-      let extendedVal = extendedRaw === "" ? 0 : parseFloat(extendedRaw);
-      
-      if ((normalRaw !== "" && isNaN(normalVal)) || (extendedRaw !== "" && isNaN(extendedVal))) {
-        alert("Please enter valid numbers for hours.");
-        return;
+      setTimeout(() => normalInput.focus(), 100);
+    };
+    const closeModal = () => { modal.classList.remove("active"); activeYear=null; };
+    const saveEntryHandler = () => {
+      if(activeYear===null) return;
+      let normal = parseFloat(normalInput.value) || 0;
+      let extended = parseFloat(extendedInput.value) || 0;
+      if(isNaN(normal)) normal=0; if(isNaN(extended)) extended=0;
+      const rate = document.querySelector('input[name="rateType"]:checked').value;
+      if(normal===0 && extended===0) setEntry(activeYear, activeMonth, activeDay, null);
+      else {
+        setEntry(activeYear, activeMonth, activeDay, {
+          normalHours: normal, extendedHours: extended, rateType: rate, customLabel: null
+        });
       }
-      
-      if (normalVal < 0 || extendedVal < 0) {
-        alert("Hours cannot be negative.");
-        return;
-      }
-      
-      let selectedRate = document.querySelector('input[name="rateType"]:checked').value;
-      
-      const entryData = {
-        normalHours: normalVal,
-        extendedHours: extendedVal,
-        rateType: selectedRate,
-        customLabel: null
-      };
-      
-      setEntry(activeYear, activeMonth, activeDay, entryData);
       closeModal();
+    };
+    const applyCode = (code) => {
+      if(activeYear===null) return;
+      if(code === "rd") setEntry(activeYear, activeMonth, activeDay, { normalHours:0, extendedHours:0, rateType:"normal", customLabel:"rd" });
+      else if(code === "ea") setEntry(activeYear, activeMonth, activeDay, { normalHours:0, extendedHours:0, rateType:"normal", customLabel:"ea" });
+      else if(code === "clear") setEntry(activeYear, activeMonth, activeDay, null);
+      closeModal();
+    };
+    const resetAll = () => { if(confirm("⚠️ ERASE ALL recorded entries? This will remove all hours, rates, RD/EA codes.")) { entriesMap.clear(); persist(); renderCalendar(); } };
+
+    // navigation
+    const goPrev = () => { let nd = new Date(currentDisplayYear, currentDisplayMonth-1, 1); currentDisplayYear=nd.getFullYear(); currentDisplayMonth=nd.getMonth(); renderCalendar(); };
+    const goNext = () => { let nd = new Date(currentDisplayYear, currentDisplayMonth+1, 1); currentDisplayYear=nd.getFullYear(); currentDisplayMonth=nd.getMonth(); renderCalendar(); };
+    const goToday = () => { const n=new Date(); currentDisplayYear=n.getFullYear(); currentDisplayMonth=n.getMonth(); renderCalendar(); };
+
+    // theme
+    const initTheme = () => {
+      const saved = localStorage.getItem('theme');
+      if(saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+      else document.documentElement.setAttribute('data-theme', 'light');
+      updateThemeIcon();
+    };
+    const toggleTheme = () => {
+      const curr = document.documentElement.getAttribute('data-theme');
+      const newTheme = curr === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeIcon();
+    };
+    const updateThemeIcon = () => {
+      const btn = document.getElementById('themeToggleBtn');
+      if(btn) btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
+    };
+
+    // offline indicator
+    const updateOffline = () => {
+      const el = document.getElementById('offlineStatus');
+      if(!navigator.onLine) el.classList.add('show');
+      else el.classList.remove('show');
+    };
+    window.addEventListener('online', updateOffline);
+    window.addEventListener('offline', updateOffline);
+    updateOffline();
+
+    // service worker (optional but matches PWA concept)
+    if('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(e=>console.log("sw reg skip", e));
     }
 
-    function applyCode(code) {
-      if (activeYear === null) return;
-      if (code === "rd") {
-        setEntry(activeYear, activeMonth, activeDay, {
-          normalHours: 0,
-          extendedHours: 0,
-          rateType: "normal",
-          customLabel: "rd"
-        });
-        closeModal();
-      } else if (code === "ea") {
-        setEntry(activeYear, activeMonth, activeDay, {
-          normalHours: 0,
-          extendedHours: 0,
-          rateType: "normal",
-          customLabel: "ea"
-        });
-        closeModal();
-      } else if (code === "clear") {
-        setEntry(activeYear, activeMonth, activeDay, null);
-        closeModal();
-      }
-    }
-
-    function resetAllData() {
-      if (confirm("⚠️ ERASE ALL recorded entries? This will remove all hours, rates, RD/EA codes.")) {
-        entriesMap.clear();
-        persistData();
-        renderCalendar();
-      }
-    }
-
-    function goPrevMonth() {
-      let newDate = new Date(currentDisplayYear, currentDisplayMonth - 1, 1);
-      currentDisplayYear = newDate.getFullYear();
-      currentDisplayMonth = newDate.getMonth();
-      renderCalendar();
-    }
-
-    function goNextMonth() {
-      let newDate = new Date(currentDisplayYear, currentDisplayMonth + 1, 1);
-      currentDisplayYear = newDate.getFullYear();
-      currentDisplayMonth = newDate.getMonth();
-      renderCalendar();
-    }
-
-    function goToToday() {
-      const now = new Date();
-      currentDisplayYear = now.getFullYear();
-      currentDisplayMonth = now.getMonth();
-      renderCalendar();
-    }
-
-    // Service Worker Registration for Offline Support
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').then(registration => {
-        console.log('ServiceWorker registration successful');
-      }).catch(err => {
-        console.log('ServiceWorker registration failed: ', err);
-      });
-    }
-
-    function init() {
-      initTheme();
+    // attach UI events & init
+    document.addEventListener("DOMContentLoaded", () => {
       loadData();
+      initTheme();
       const now = new Date();
       currentDisplayYear = now.getFullYear();
       currentDisplayMonth = now.getMonth();
       renderCalendar();
-      
-      const themeToggleDiv = document.createElement('div');
-      themeToggleDiv.className = 'theme-toggle';
-      themeToggleDiv.innerHTML = '<button class="theme-toggle-btn" id="themeToggleBtn">🌙</button>';
-      document.body.appendChild(themeToggleDiv);
-      
-      document.getElementById("prevMonthBtn").addEventListener("click", goPrevMonth);
-      document.getElementById("nextMonthBtn").addEventListener("click", goNextMonth);
-      document.getElementById("todayBtn").addEventListener("click", goToToday);
-      document.getElementById("resetAllDataBtn").addEventListener("click", resetAllData);
-      document.getElementById("saveHoursBtn").addEventListener("click", saveHours);
-      document.getElementById("cancelModalBtn").addEventListener("click", closeModal);
+      const themeDiv = document.createElement('div');
+      themeDiv.className = 'theme-toggle';
+      themeDiv.innerHTML = '<button class="theme-toggle-btn" id="themeToggleBtn">🌙</button>';
+      document.body.appendChild(themeDiv);
       document.getElementById("themeToggleBtn").addEventListener("click", toggleTheme);
-      modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
-      normalHoursInput.addEventListener("keypress", (e) => { if (e.key === "Enter") saveHours(); });
-      extendedHoursInput.addEventListener("keypress", (e) => { if (e.key === "Enter") saveHours(); });
-      
+      document.getElementById("prevMonthBtn").addEventListener("click", goPrev);
+      document.getElementById("nextMonthBtn").addEventListener("click", goNext);
+      document.getElementById("todayBtn").addEventListener("click", goToday);
+      document.getElementById("resetAllDataBtn").addEventListener("click", resetAll);
+      document.getElementById("saveHoursBtn").addEventListener("click", saveEntryHandler);
+      document.getElementById("cancelModalBtn").addEventListener("click", closeModal);
+      modal.addEventListener("click", (e) => { if(e.target === modal) closeModal(); });
       document.querySelectorAll(".code-btn").forEach(btn => {
-        btn.addEventListener("click", (e) => {
-          const code = btn.getAttribute("data-code");
-          if (code) applyCode(code);
-        });
+        btn.addEventListener("click", (e) => { const code = btn.getAttribute("data-code"); if(code) applyCode(code); });
       });
-    }
-
-    init();
+      normalInput.addEventListener("keypress", (e) => { if(e.key === "Enter") saveEntryHandler(); });
+      extendedInput.addEventListener("keypress", (e) => { if(e.key === "Enter") saveEntryHandler(); });
+    });
   </script>
 </body>
 </html>
