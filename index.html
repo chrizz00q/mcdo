@@ -7,16 +7,12 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="SmartPay">
   <meta name="theme-color" content="#2c3e50">
-  <meta name="description" content="Work hours tracker with salary calculator - works offline">
+  <meta name="description" content="Work hours tracker with salary calculator - smooth theme transitions">
   
   <title>mcdo · Work Logger</title>
   
-  <!-- PWA Icons -->
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232c3e50'/%3E%3Ctext x='50' y='67' font-size='50' text-anchor='middle' fill='white' font-family='Arial'%3E📅%3C/text%3E%3C/svg%3E">
-  <link rel="manifest" href="manifest.json">
-  
   <style>
-    /* ==================== MODERN DESIGN (based on original logic) ==================== */
+    /* ==================== RESET & GLOBAL ==================== */
     * {
       margin: 0;
       padding: 0;
@@ -24,6 +20,13 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    /* SMOOTH TRANSITION for all themed properties */
+    :root {
+      --transition-duration: 0.4s;
+      --transition-easing: cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+
+    /* Base light theme (default) */
     :root {
       --bg-primary: linear-gradient(135deg, #f5f9ff 0%, #eef2f8 100%);
       --bg-card: rgba(255, 255, 255, 0.98);
@@ -52,8 +55,10 @@
       --modal-bg: #ffffff;
       --input-border: #e2e8f0;
       --radio-bg: #f8fafc;
+      --legend-text: #5c6f87;
     }
 
+    /* Dark theme with same variable names - smooth transition */
     [data-theme="dark"] {
       --bg-primary: linear-gradient(135deg, #1a1f2e 0%, #0f1219 100%);
       --bg-card: rgba(30, 35, 48, 0.98);
@@ -82,14 +87,56 @@
       --modal-bg: #1e2538;
       --input-border: #3a4258;
       --radio-bg: #2a3246;
+      --legend-text: #9aa9c1;
+    }
+
+    /* Apply transitions to all elements that use theme variables */
+    * {
+      transition: 
+        background-color var(--transition-duration) var(--transition-easing),
+        background var(--transition-duration) var(--transition-easing),
+        border-color var(--transition-duration) var(--transition-easing),
+        color var(--transition-duration) var(--transition-easing),
+        box-shadow var(--transition-duration) var(--transition-easing),
+        fill var(--transition-duration) var(--transition-easing),
+        stroke var(--transition-duration) var(--transition-easing);
+    }
+
+    /* Specific transitions for gradient backgrounds (smooth crossfade) */
+    body, .calendar-card, .salary-panel, .legend-bar, .modal-content {
+      transition: background var(--transition-duration) var(--transition-easing), 
+                  box-shadow var(--transition-duration) var(--transition-easing),
+                  border-color var(--transition-duration) var(--transition-easing);
+    }
+
+    /* Buttons and interactive elements get faster transitions */
+    .nav-btn, .reset-btn, .code-btn, .modal-btn, .theme-toggle-btn, .calendar-cell {
+      transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+
+    /* Calendar cells need individual background transition */
+    .calendar-cell {
+      transition: background 0.2s ease, transform 0.1s ease;
+    }
+
+    /* Fix for gradient background smoothness */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-primary);
+      z-index: -1;
+      transition: background var(--transition-duration) var(--transition-easing);
     }
 
     body {
-      background: var(--bg-primary);
       font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
       min-height: 100vh;
       padding: 1rem;
-      transition: background 0.3s ease;
+      position: relative;
     }
 
     @media (min-width: 768px) {
@@ -101,6 +148,7 @@
       margin: 0 auto;
     }
 
+    /* Offline Status */
     .offline-status {
       position: fixed;
       top: 0;
@@ -118,6 +166,7 @@
     }
     .offline-status.show { transform: translateY(0); }
 
+    /* Theme Toggle Button with smooth animation */
     .theme-toggle {
       position: fixed;
       bottom: 1.5rem;
@@ -125,8 +174,8 @@
       z-index: 1000;
     }
     .theme-toggle-btn {
-      width: 52px;
-      height: 52px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
       background: var(--bg-card);
       border: 1px solid var(--border-color);
@@ -134,22 +183,35 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       box-shadow: 0 4px 12px var(--shadow-sm);
-      transition: all 0.3s ease;
       backdrop-filter: blur(10px);
       color: var(--text-primary);
+      transform: scale(1);
     }
-    .theme-toggle-btn:active { transform: scale(0.92); }
+    .theme-toggle-btn:active {
+      transform: scale(0.92);
+    }
+    /* Hover effect for desktop */
+    @media (min-width: 768px) {
+      .theme-toggle-btn:hover {
+        transform: scale(1.08);
+        box-shadow: 0 6px 20px var(--shadow);
+      }
+    }
 
+    /* Calendar Card */
     .calendar-card {
       background: var(--bg-card);
       border-radius: 1.5rem;
       box-shadow: 0 20px 40px -12px var(--shadow), 0 2px 8px var(--shadow-sm);
       overflow: hidden;
       margin-bottom: 1.25rem;
-      transition: all 0.3s ease;
     }
+    @media (min-width: 768px) {
+      .calendar-card { border-radius: 2rem; margin-bottom: 1.5rem; }
+    }
+
     .calendar-header {
       background: var(--bg-header);
       padding: 1rem 1.25rem;
@@ -160,6 +222,10 @@
       justify-content: space-between;
       gap: 0.75rem;
     }
+    @media (min-width: 768px) {
+      .calendar-header { padding: 1.25rem 1.8rem; }
+    }
+
     .month-year {
       font-size: 1.35rem;
       font-weight: 700;
@@ -167,8 +233,10 @@
       background-clip: text;
       -webkit-background-clip: text;
       color: transparent;
+      transition: background 0.3s ease;
     }
     @media (min-width: 768px) { .month-year { font-size: 1.7rem; } }
+
     .nav-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; }
     .nav-btn {
       background: var(--btn-bg);
@@ -177,7 +245,6 @@
       padding: 0.5rem 1rem;
       border-radius: 2rem;
       cursor: pointer;
-      transition: all 0.2s ease;
       color: var(--text-primary);
       font-size: 0.85rem;
     }
@@ -213,7 +280,6 @@
       display: flex;
       flex-direction: column;
       background: var(--cell-bg);
-      transition: 0.1s;
     }
     .calendar-cell:active { background: var(--cell-hover); transform: scale(0.98); }
     .day-number {
@@ -251,6 +317,7 @@
 
     .edit-hint { font-size: 0.55rem; color: var(--text-muted); margin-top: 0.2rem; text-align: center; }
 
+    /* Salary Panel */
     .salary-panel {
       background: var(--bg-card);
       border-radius: 1.25rem;
@@ -261,7 +328,9 @@
       box-shadow: 0 8px 20px var(--shadow-sm);
       margin-bottom: 1rem;
     }
-    @media (min-width: 768px) { .salary-panel { flex-direction: row; align-items: center; justify-content: space-between; } }
+    @media (min-width: 768px) { 
+      .salary-panel { flex-direction: row; align-items: center; justify-content: space-between; }
+    }
 
     .cutoff-card {
       background: var(--cutoff-bg);
@@ -286,7 +355,6 @@
       cursor: pointer;
       color: var(--text-primary);
       font-size: 0.75rem;
-      transition: 0.2s;
     }
     .reset-btn:active { transform: scale(0.96); background: var(--btn-hover); }
 
@@ -301,7 +369,8 @@
       justify-content: center;
       gap: 1rem;
       font-size: 0.7rem;
-      color: var(--text-secondary);
+      color: var(--legend-text);
+      box-shadow: 0 4px 12px var(--shadow-sm);
     }
     .legend-dot {
       display: inline-block;
@@ -327,7 +396,7 @@
       z-index: 2000;
       visibility: hidden;
       opacity: 0;
-      transition: 0.2s ease;
+      transition: visibility 0.2s, opacity 0.2s ease;
       padding: 1rem;
     }
     .modal.active { visibility: visible; opacity: 1; }
@@ -356,6 +425,7 @@
       background: var(--cell-bg);
       color: var(--text-primary);
     }
+    .hours-input:focus { outline: none; border-color: #2c7da0; }
     .radio-group { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.3rem; }
     .radio-group label {
       display: flex;
@@ -366,6 +436,7 @@
       border-radius: 1.5rem;
       background: var(--radio-bg);
       color: var(--text-primary);
+      cursor: pointer;
     }
     .code-buttons { display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
     .code-btn {
@@ -385,7 +456,7 @@
     .modal-btn { padding: 0.6rem 1.2rem; border-radius: 2rem; font-weight: 600; cursor: pointer; border: none; }
     .save-btn { background: #2c7da0; color: white; }
     .cancel-btn { background: var(--btn-bg); color: var(--text-primary); }
-    hr { margin: 0.8rem 0; border-color: var(--border-color); }
+    .hours-total-hint { font-size: 0.65rem; color: var(--text-muted); margin-top: 4px; }
   </style>
 </head>
 <body>
@@ -425,15 +496,15 @@
       <h3 id="modalDateLabel" style="color:var(--text-primary)">📅 Date</h3>
       <div class="date-sub" style="color:var(--text-muted); margin-bottom:1rem" id="modalDateSub">Set normal & extended hours</div>
       <div class="input-group"><label>⏱️ Normal Hours (₱86/hr)</label><input type="number" id="normalHoursInput" class="hours-input" step="0.5" placeholder="e.g., 8, 7.5" value="0"></div>
-      <div class="input-group"><label>⚡ Extended Hours (₱86/hr)</label><input type="number" id="extendedHoursInput" class="hours-input" step="0.5" placeholder="e.g., 2, 3.5" value="0"><div class="hours-total-hint" style="font-size:0.65rem; color:var(--text-muted); margin-top:4px">Extra hours at same base rate</div></div>
+      <div class="input-group"><label>⚡ Extended Hours (₱86/hr)</label><input type="number" id="extendedHoursInput" class="hours-input" step="0.5" placeholder="e.g., 2, 3.5" value="0"><div class="hours-total-hint">Extra hours at same base rate</div></div>
       <div class="input-group"><label>✨ Special Rate (applies to ALL hours this day)</label><div class="radio-group" id="rateTypeGroup"><label><input type="radio" name="rateType" value="normal" checked> Normal (1x)</label><label><input type="radio" name="rateType" value="holiday"> 🎉 Holiday +30% (1.3x)</label><label><input type="radio" name="rateType" value="double"> 💰 Double Pay (2x)</label></div></div>
-      <div class="input-group"><label>📌 Quick Codes</label><div class="code-buttons"><button type="button" class="code-btn" data-code="rd">🟢 RD (Rest Day)</button><button type="button" class="code-btn" data-code="ea">🟠 EA (Absent)</button><button type="button" class="code-btn" data-code="clear">🗑️ Clear Entry</button></div><div class="hours-total-hint" style="font-size:0.6rem; margin-top:6px">⚠️ RD/EA sets hours to 0, no salary</div></div>
+      <div class="input-group"><label>📌 Quick Codes</label><div class="code-buttons"><button type="button" class="code-btn" data-code="rd">🟢 RD (Rest Day)</button><button type="button" class="code-btn" data-code="ea">🟠 EA (Absent)</button><button type="button" class="code-btn" data-code="clear">🗑️ Clear Entry</button></div><div class="hours-total-hint">⚠️ RD/EA sets hours to 0, no salary</div></div>
       <div class="modal-buttons"><button class="modal-btn cancel-btn" id="cancelModalBtn">Cancel</button><button class="modal-btn save-btn" id="saveHoursBtn">💾 Save Entry</button></div>
     </div>
   </div>
 
   <script>
-    // ---------- CONSTANTS ----------
+    // ==================== APP LOGIC (same as original, enhanced with smooth theme) ====================
     const BASE_RATE = 86.00;
     const HOLIDAY_MULTIPLIER = 1.30;
     const DOUBLE_MULTIPLIER = 2.0;
@@ -442,12 +513,8 @@
     let currentDisplayYear = new Date().getFullYear();
     let currentDisplayMonth = new Date().getMonth();
 
-    // helpers
     const formatYMD = (y, m, d) => `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const loadData = () => {
-      const saved = localStorage.getItem("workEntriesEnhanced");
-      if (saved) try { entriesMap = new Map(Object.entries(JSON.parse(saved))); } catch(e) {}
-    };
+    const loadData = () => { const saved = localStorage.getItem("workEntriesEnhanced"); if (saved) try { entriesMap = new Map(Object.entries(JSON.parse(saved))); } catch(e) {} };
     const persist = () => { localStorage.setItem("workEntriesEnhanced", JSON.stringify(Object.fromEntries(entriesMap))); };
     const getEntry = (y,m,d) => entriesMap.get(formatYMD(y,m,d)) || null;
     const setEntry = (y,m,d, data) => {
@@ -611,12 +678,11 @@
     };
     const resetAll = () => { if(confirm("⚠️ ERASE ALL recorded entries? This will remove all hours, rates, RD/EA codes.")) { entriesMap.clear(); persist(); renderCalendar(); } };
 
-    // navigation
     const goPrev = () => { let nd = new Date(currentDisplayYear, currentDisplayMonth-1, 1); currentDisplayYear=nd.getFullYear(); currentDisplayMonth=nd.getMonth(); renderCalendar(); };
     const goNext = () => { let nd = new Date(currentDisplayYear, currentDisplayMonth+1, 1); currentDisplayYear=nd.getFullYear(); currentDisplayMonth=nd.getMonth(); renderCalendar(); };
     const goToday = () => { const n=new Date(); currentDisplayYear=n.getFullYear(); currentDisplayMonth=n.getMonth(); renderCalendar(); };
 
-    // theme
+    // SMOOTH THEME TOGGLE with transition class
     const initTheme = () => {
       const saved = localStorage.getItem('theme');
       if(saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
@@ -635,22 +701,11 @@
       if(btn) btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
     };
 
-    // offline indicator
-    const updateOffline = () => {
-      const el = document.getElementById('offlineStatus');
-      if(!navigator.onLine) el.classList.add('show');
-      else el.classList.remove('show');
-    };
+    const updateOffline = () => { const el = document.getElementById('offlineStatus'); if(!navigator.onLine) el.classList.add('show'); else el.classList.remove('show'); };
     window.addEventListener('online', updateOffline);
     window.addEventListener('offline', updateOffline);
     updateOffline();
 
-    // service worker (optional but matches PWA concept)
-    if('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(e=>console.log("sw reg skip", e));
-    }
-
-    // attach UI events & init
     document.addEventListener("DOMContentLoaded", () => {
       loadData();
       initTheme();
