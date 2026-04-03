@@ -515,8 +515,8 @@
     </div>
 
     <div class="salary-panel">
-      <div class="cutoff-card first"><div class="cutoff-title">📆 FIRST CUT-OFF (Days 1–15)</div><div class="cutoff-hours" id="firstHours">0.0 <small>hrs</small></div><div class="cutoff-salary" id="firstSalary">₱ 0.00</div></div>
-      <div class="cutoff-card second"><div class="cutoff-title">📆 SECOND CUT-OFF (Days 16–31)</div><div class="cutoff-hours" id="secondHours">0.0 <small>hrs</small></div><div class="cutoff-salary" id="secondSalary">₱ 0.00</div></div>
+      <div class="cutoff-card first"><div class="cutoff-title">📆 FIRST CUT-OFF (Days 1–15)</div><div class="cutoff-hours" id="firstHours">0 <small>hrs</small></div><div class="cutoff-salary" id="firstSalary">₱ 0.00</div></div>
+      <div class="cutoff-card second"><div class="cutoff-title">📆 SECOND CUT-OFF (Days 16–31)</div><div class="cutoff-hours" id="secondHours">0 <small>hrs</small></div><div class="cutoff-salary" id="secondSalary">₱ 0.00</div></div>
       <button class="reset-btn" id="resetAllDataBtn">🗑️ Reset All Data</button>
     </div>
 
@@ -607,6 +607,16 @@
       });
     }
     
+    // ==================== HELPER: Format hours without unnecessary .0 ====================
+    function formatHours(hours) {
+      // Check if it's a whole number
+      if (Number.isInteger(hours)) {
+        return hours.toString();
+      }
+      // Otherwise show with 1 decimal
+      return hours.toFixed(1);
+    }
+    
     // ==================== APP LOGIC ====================
     const BASE_RATE = 86.00;
     const HOLIDAY_MULTIPLIER = 1.30;
@@ -654,9 +664,14 @@
       const lastDay = new Date(currentDisplayYear, currentDisplayMonth+1, 0).getDate();
       const first = calculateCutoffRange(currentDisplayYear, currentDisplayMonth, 1, 15);
       const second = calculateCutoffRange(currentDisplayYear, currentDisplayMonth, 16, lastDay);
-      document.getElementById("firstHours").innerHTML = first.totalHours.toFixed(1) + " <small>hrs</small>";
+      
+      // Format without unnecessary .0
+      let firstFormatted = formatHours(first.totalHours);
+      let secondFormatted = formatHours(second.totalHours);
+      
+      document.getElementById("firstHours").innerHTML = firstFormatted + " <small>hrs</small>";
+      document.getElementById("secondHours").innerHTML = secondFormatted + " <small>hrs</small>";
       document.getElementById("firstSalary").innerHTML = `₱ ${first.totalSalary.toFixed(2)}`;
-      document.getElementById("secondHours").innerHTML = second.totalHours.toFixed(1) + " <small>hrs</small>";
       document.getElementById("secondSalary").innerHTML = `₱ ${second.totalSalary.toFixed(2)}`;
     };
 
@@ -707,9 +722,14 @@
             const total = normal+extended;
             if(total > 0) {
               let displayText = "";
-              if(normal>0 && extended>0) displayText = `${normal.toFixed(1)}+${extended.toFixed(1)}`;
-              else if(normal>0) displayText = `${normal.toFixed(1)}`;
-              else displayText = `${extended.toFixed(1)}ext`;
+              // Format without unnecessary .0
+              let normalDisplay = formatHours(normal);
+              let extendedDisplay = formatHours(extended);
+              
+              if(normal>0 && extended>0) displayText = `${normalDisplay}+${extendedDisplay}`;
+              else if(normal>0) displayText = `${normalDisplay}`;
+              else displayText = `${extendedDisplay}ext`;
+              
               if(entry.rateType === "holiday") { displayText += " 🎉+30%"; badge.classList.add("holiday"); }
               else if(entry.rateType === "double") { displayText += " 💰2x"; badge.classList.add("holiday"); }
               else if(extended>0) badge.classList.add("extended");
