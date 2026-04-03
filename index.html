@@ -7,32 +7,23 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="SmartPay">
   <meta name="theme-color" content="#2c3e50">
-  <meta name="description" content="Work hours tracker with salary calculator - smooth theme transitions">
-  
+  <meta name="description" content="Work hours tracker with salary calculator">
   <link rel="apple-touch-icon" href="icon.png">
   <link rel="icon" type="image/png" href="icon.png">
   <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22SmartPay%20Work%20Logger%22,%22short_name%22:%22SmartPay%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22theme_color%22:%22#2c3e50%22,%22background_color%22:%22#ffffff%22,%22icons%22:[{%22src%22:%22icon.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
-  
   <title>SmartPay · Work Logger</title>
-  
+
   <style>
-    /* ==================== RESET & GLOBAL ==================== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    *, *::before, *::after {
+      margin: 0; padding: 0; box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
     }
 
     :root {
       --transition-duration: 0.4s;
       --transition-easing: cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    }
-
-    /* Base light theme */
-    :root {
       --bg-primary: linear-gradient(135deg, #f5f9ff 0%, #eef2f8 100%);
-      --bg-card: rgba(255, 255, 255, 0.98);
+      --bg-card: rgba(255,255,255,0.98);
       --bg-header: #ffffff;
       --border-color: #eef2f8;
       --text-primary: #1e2a3a;
@@ -53,18 +44,18 @@
       --badge-rd: #e8f5e9;
       --badge-ea: #f4f6f7;
       --cutoff-bg: #f8fafc;
-      --shadow: rgba(0, 0, 0, 0.15);
-      --shadow-sm: rgba(0, 0, 0, 0.05);
+      --shadow: rgba(0,0,0,0.15);
+      --shadow-sm: rgba(0,0,0,0.05);
       --modal-bg: #ffffff;
       --input-border: #e2e8f0;
       --radio-bg: #f8fafc;
       --legend-text: #5c6f87;
+      --empty-color: #c5d1de;
     }
 
-    /* Dark theme */
     [data-theme="dark"] {
       --bg-primary: linear-gradient(135deg, #1a1f2e 0%, #0f1219 100%);
-      --bg-card: rgba(30, 35, 48, 0.98);
+      --bg-card: rgba(30,35,48,0.98);
       --bg-header: #1e2538;
       --border-color: #2a3246;
       --text-primary: #e8edf5;
@@ -85,448 +76,261 @@
       --badge-rd: #1a4a2e;
       --badge-ea: #3a424f;
       --cutoff-bg: #1a1f2e;
-      --shadow: rgba(0, 0, 0, 0.3);
-      --shadow-sm: rgba(0, 0, 0, 0.2);
+      --shadow: rgba(0,0,0,0.3);
+      --shadow-sm: rgba(0,0,0,0.2);
       --modal-bg: #1e2538;
       --input-border: #3a4258;
       --radio-bg: #2a3246;
       --legend-text: #9aa9c1;
+      --empty-color: #3a4258;
     }
 
     * {
-      transition: 
+      transition:
         background-color var(--transition-duration) var(--transition-easing),
         background var(--transition-duration) var(--transition-easing),
         border-color var(--transition-duration) var(--transition-easing),
         color var(--transition-duration) var(--transition-easing),
         box-shadow var(--transition-duration) var(--transition-easing);
     }
-
-    body, .calendar-card, .salary-panel, .legend-bar, .modal-content {
-      transition: background var(--transition-duration) var(--transition-easing), 
-                  box-shadow var(--transition-duration) var(--transition-easing),
-                  border-color var(--transition-duration) var(--transition-easing);
-    }
-
-    .nav-btn, .reset-btn, .code-btn, .modal-btn, .theme-toggle-btn, .calendar-cell {
-      transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    }
-
-    .calendar-cell {
-      transition: background 0.2s ease, transform 0.1s ease;
-    }
+    .nav-btn, .reset-btn, .code-btn, .modal-btn, .theme-toggle-btn { transition: all 0.18s ease; }
+    .calendar-cell { transition: background 0.15s ease, transform 0.1s ease; }
 
     body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--bg-primary);
-      z-index: -1;
+      content: ''; position: fixed; inset: 0;
+      background: var(--bg-primary); z-index: -1;
       transition: background var(--transition-duration) var(--transition-easing);
     }
 
     body {
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
-      min-height: 100vh;
-      /* Safe area support for notched phones */
-      padding: env(safe-area-inset-top, 0.75rem) env(safe-area-inset-right, 0.75rem) env(safe-area-inset-bottom, 5rem) env(safe-area-inset-left, 0.75rem);
-      position: relative;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      min-height: 100vh; position: relative;
     }
+    @media (max-width: 767px) { body { padding: 0.75rem 0.75rem 5rem; } }
+    @media (min-width: 768px) { body { padding: 1.5rem; } }
 
-    /* Mobile first padding */
-    @media (max-width: 767px) {
-      body {
-        padding-top: 0.75rem;
-        padding-left: 0.75rem;
-        padding-right: 0.75rem;
-        padding-bottom: 5rem; /* space for fixed theme toggle */
-      }
-    }
+    .dashboard { max-width: 1400px; margin: 0 auto; }
 
-    @media (min-width: 768px) {
-      body { padding: 1.5rem; }
-    }
-
-    .dashboard {
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    /* Theme Toggle Button */
+    /* === THEME TOGGLE === */
     .theme-toggle {
       position: fixed;
       bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem));
-      right: 1.5rem;
-      z-index: 1000;
+      right: 1.5rem; z-index: 1000;
     }
     .theme-toggle-btn {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      box-shadow: 0 4px 12px var(--shadow-sm);
-      backdrop-filter: blur(10px);
-      color: var(--text-primary);
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; box-shadow: 0 4px 12px var(--shadow-sm);
+      backdrop-filter: blur(10px); color: var(--text-primary);
     }
-    .theme-toggle-btn:active { transform: scale(0.92); }
+    .theme-toggle-btn:active { transform: scale(0.9); }
     @media (min-width: 768px) {
       .theme-toggle-btn:hover { transform: scale(1.08); box-shadow: 0 6px 20px var(--shadow); }
     }
 
-    /* Calendar Card */
+    /* === CALENDAR CARD === */
     .calendar-card {
-      background: var(--bg-card);
-      border-radius: 1.25rem;
+      background: var(--bg-card); border-radius: 1.25rem;
       box-shadow: 0 8px 24px -6px var(--shadow), 0 2px 8px var(--shadow-sm);
-      overflow: hidden;
-      margin-bottom: 1rem;
+      overflow: hidden; margin-bottom: 1rem;
+      user-select: none; -webkit-user-select: none;
     }
-    @media (min-width: 768px) {
-      .calendar-card { border-radius: 2rem; margin-bottom: 1.5rem; }
-    }
+    @media (min-width: 768px) { .calendar-card { border-radius: 2rem; margin-bottom: 1.5rem; } }
+
+    /* === SWIPE ANIMATIONS === */
+    .calendar-grid-wrapper { overflow: hidden; position: relative; }
+
+    @keyframes slideFromRight { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideFromLeft  { from { transform: translateX(-50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes fadeSlideDown  { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes numPop { 0% { transform: scale(1); } 45% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+    .slide-from-right { animation: slideFromRight 0.28s cubic-bezier(0.22,1,0.36,1) both; }
+    .slide-from-left  { animation: slideFromLeft  0.28s cubic-bezier(0.22,1,0.36,1) both; }
+    .month-anim       { animation: fadeSlideDown 0.2s ease both; }
+    .num-pop          { animation: numPop 0.32s cubic-bezier(0.22,1,0.36,1) both; }
 
     .calendar-header {
-      background: var(--bg-header);
-      padding: 0.75rem 1rem;
+      background: var(--bg-header); padding: 0.75rem 1rem;
       border-bottom: 1px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      flex-wrap: nowrap;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 0.5rem; flex-wrap: nowrap;
     }
-    @media (min-width: 768px) {
-      .calendar-header { padding: 1.25rem 1.8rem; }
-    }
+    @media (min-width: 768px) { .calendar-header { padding: 1.25rem 1.8rem; } }
 
     .month-year {
-      font-size: 1.15rem;
-      font-weight: 700;
+      font-size: 1.15rem; font-weight: 700;
       background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
-      white-space: nowrap;
-      flex-shrink: 0;
+      background-clip: text; -webkit-background-clip: text; color: transparent;
+      white-space: nowrap; flex-shrink: 0;
     }
     @media (min-width: 768px) { .month-year { font-size: 1.7rem; } }
 
     .nav-buttons { display: flex; gap: 0.4rem; flex-shrink: 0; }
     .nav-btn {
-      background: var(--btn-bg);
-      border: none;
-      font-weight: 600;
-      padding: 0.4rem 0.75rem;
-      border-radius: 2rem;
-      cursor: pointer;
-      color: var(--text-primary);
-      font-size: 0.78rem;
-      white-space: nowrap;
+      background: var(--btn-bg); border: none; font-weight: 600;
+      padding: 0.4rem 0.75rem; border-radius: 2rem; cursor: pointer;
+      color: var(--text-primary); font-size: 0.78rem; white-space: nowrap;
     }
-    @media (min-width: 768px) {
-      .nav-btn { padding: 0.5rem 1rem; font-size: 0.85rem; }
-    }
-    .nav-btn:active { transform: scale(0.96); background: var(--btn-hover); }
+    @media (min-width: 768px) { .nav-btn { padding: 0.5rem 1rem; font-size: 0.85rem; } }
+    .nav-btn:active { transform: scale(0.95); background: var(--btn-hover); }
     .today-btn { background: var(--btn-today); color: white; }
     .today-btn:active { background: var(--btn-today-hover); }
 
     .weekdays {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      background: var(--weekday-bg);
-      padding: 0.5rem 0;
+      display: grid; grid-template-columns: repeat(7, 1fr);
+      background: var(--weekday-bg); padding: 0.5rem 0;
       border-bottom: 1px solid var(--border-color);
-      text-align: center;
-      font-weight: 600;
-      font-size: 0.65rem;
-      color: var(--text-secondary);
+      text-align: center; font-weight: 600; font-size: 0.65rem; color: var(--text-secondary);
     }
     @media (min-width: 768px) { .weekdays { font-size: 0.85rem; } }
 
     .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
+      display: grid; grid-template-columns: repeat(7, 1fr);
       background: var(--cell-bg);
     }
 
-    /* Mobile: compact cells */
     .calendar-cell {
-      min-height: 60px;
-      padding: 0.3rem 0.25rem;
+      min-height: 60px; padding: 0.3rem 0.25rem;
       border-right: 1px solid var(--cell-border);
       border-bottom: 1px solid var(--cell-border);
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      background: var(--cell-bg);
-      overflow: hidden;
+      cursor: pointer; display: flex; flex-direction: column;
+      background: var(--cell-bg); overflow: hidden;
     }
-    @media (min-width: 480px) {
-      .calendar-cell { min-height: 75px; padding: 0.35rem; }
-    }
-    @media (min-width: 768px) {
-      .calendar-cell { min-height: 95px; padding: 0.5rem; }
-    }
-    .calendar-cell:active { background: var(--cell-hover); transform: scale(0.98); }
+    @media (min-width: 480px) { .calendar-cell { min-height: 75px; padding: 0.35rem; } }
+    @media (min-width: 768px) { .calendar-cell { min-height: 95px; padding: 0.5rem; } }
+    .calendar-cell:active { background: var(--cell-hover); transform: scale(0.97); }
 
     .day-number {
-      font-size: 0.78rem;
-      font-weight: 600;
-      width: 1.55rem;
-      height: 1.55rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 2rem;
-      margin-bottom: 0.15rem;
-      color: var(--text-primary);
-      flex-shrink: 0;
+      font-size: 0.78rem; font-weight: 600;
+      width: 1.55rem; height: 1.55rem;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 2rem; margin-bottom: 0.15rem;
+      color: var(--text-primary); flex-shrink: 0;
     }
-    @media (min-width: 768px) {
-      .day-number { font-size: 0.9rem; width: 1.8rem; height: 1.8rem; }
-    }
+    @media (min-width: 768px) { .day-number { font-size: 0.9rem; width: 1.8rem; height: 1.8rem; } }
     .today .day-number { background: var(--btn-today); color: white; box-shadow: 0 2px 6px var(--shadow); }
     .other-month .day-number { color: var(--text-muted); }
 
     .entry-badge {
-      background: var(--badge-bg);
-      border-radius: 0.5rem;
-      padding: 0.15rem 0.3rem;
-      font-size: 0.58rem;
-      font-weight: 600;
-      text-align: center;
-      margin-top: 0.1rem;
-      border-left: 2px solid;
-      word-break: break-word;
-      color: var(--text-primary);
-      line-height: 1.3;
+      background: var(--badge-bg); border-radius: 0.5rem;
+      padding: 0.15rem 0.3rem; font-size: 0.58rem; font-weight: 600;
+      text-align: center; margin-top: 0.1rem; border-left: 2px solid;
+      word-break: break-word; color: var(--text-primary); line-height: 1.3;
     }
-    @media (min-width: 480px) {
-      .entry-badge { font-size: 0.62rem; padding: 0.18rem 0.35rem; }
-    }
-    @media (min-width: 768px) {
-      .entry-badge { font-size: 0.65rem; padding: 0.2rem 0.4rem; border-left-width: 3px; border-radius: 0.75rem; }
-    }
-    .entry-badge.normal { border-left-color: #2c7da0; background: var(--badge-normal); }
+    @media (min-width: 480px) { .entry-badge { font-size: 0.62rem; padding: 0.18rem 0.35rem; } }
+    @media (min-width: 768px) { .entry-badge { font-size: 0.65rem; padding: 0.2rem 0.4rem; border-left-width: 3px; border-radius: 0.75rem; } }
+    .entry-badge.normal   { border-left-color: #2c7da0; background: var(--badge-normal); }
     .entry-badge.extended { border-left-color: #e67e22; background: var(--badge-extended); }
-    .entry-badge.holiday { border-left-color: #e74c3c; background: var(--badge-holiday); }
-    .entry-badge.restday { border-left-color: #27ae60; background: var(--badge-rd); }
-    .entry-badge.ea { border-left-color: #95a5a6; background: var(--badge-ea); }
-
+    .entry-badge.holiday  { border-left-color: #e74c3c; background: var(--badge-holiday); }
+    .entry-badge.restday  { border-left-color: #27ae60; background: var(--badge-rd); }
+    .entry-badge.ea       { border-left-color: #95a5a6; background: var(--badge-ea); }
     .edit-hint { font-size: 0.5rem; color: var(--text-muted); margin-top: auto; text-align: center; }
-    @media (min-width: 768px) { .edit-hint { font-size: 0.55rem; } }
 
-    /* Salary Panel — stacked on mobile, row on desktop */
+    /* === SALARY PANEL === */
     .salary-panel {
-      background: var(--bg-card);
-      border-radius: 1.1rem;
-      padding: 0.85rem 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      box-shadow: 0 8px 20px var(--shadow-sm);
-      margin-bottom: 0.85rem;
+      background: var(--bg-card); border-radius: 1.1rem;
+      padding: 0.85rem 1rem; display: flex; flex-direction: column;
+      gap: 0.75rem; box-shadow: 0 8px 20px var(--shadow-sm); margin-bottom: 0.85rem;
     }
     @media (min-width: 768px) {
-      .salary-panel {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        border-radius: 1.25rem;
-        padding: 1rem 1.25rem;
-      }
+      .salary-panel { flex-direction: row; align-items: center; justify-content: space-between; border-radius: 1.25rem; padding: 1rem 1.25rem; }
     }
 
     .cutoff-card {
-      background: var(--cutoff-bg);
-      border-radius: 0.85rem;
-      padding: 0.75rem 1rem;
-      flex: 1;
-      border-left: 4px solid;
+      background: var(--cutoff-bg); border-radius: 0.85rem;
+      padding: 0.75rem 1rem; flex: 1; border-left: 4px solid;
     }
-    .cutoff-card.first { border-left-color: #2c7da0; }
+    .cutoff-card.first  { border-left-color: #2c7da0; }
     .cutoff-card.second { border-left-color: #5a6e8a; }
 
     .cutoff-title {
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      font-weight: 700;
-      color: var(--text-secondary);
-      margin-bottom: 0.35rem;
+      font-size: 0.65rem; text-transform: uppercase; font-weight: 700;
+      color: var(--text-secondary); margin-bottom: 0.35rem;
     }
     @media (min-width: 768px) { .cutoff-title { font-size: 0.7rem; } }
 
-    /* ── Totals row: hours + salary side by side on mobile ── */
-    .cutoff-totals {
-      display: flex;
-      align-items: baseline;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
+    .cutoff-totals { display: flex; align-items: baseline; gap: 0.75rem; flex-wrap: wrap; }
 
-    .cutoff-hours {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      white-space: nowrap;
-    }
-    @media (min-width: 768px) { .cutoff-hours { font-size: 1.4rem; } }
+    .cutoff-hours { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); white-space: nowrap; }
+    .cutoff-salary { font-size: 1rem; font-weight: 700; color: #2c7da0; white-space: nowrap; }
+    @media (min-width: 768px) { .cutoff-hours { font-size: 1.4rem; } .cutoff-salary { font-size: 1.1rem; } }
 
-    .cutoff-salary {
-      font-size: 1rem;
-      font-weight: 700;
-      color: #2c7da0;
-      white-space: nowrap;
+    /* === EMPTY STATE === */
+    .empty-state {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0.3rem; padding: 0.25rem 0; text-align: center;
     }
-    @media (min-width: 768px) { .cutoff-salary { font-size: 1.1rem; } }
-
-    .rate-info { font-size: 0.6rem; color: var(--text-muted); margin-top: 0.2rem; }
+    .empty-state-icon { font-size: 1.4rem; opacity: 0.35; }
+    .empty-state-label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); }
+    .empty-state-sub { font-size: 0.62rem; color: var(--text-muted); opacity: 0.7; }
 
     .reset-btn {
-      background: var(--btn-bg);
-      border: none;
-      padding: 0.6rem 1rem;
-      border-radius: 2rem;
-      font-weight: 500;
-      cursor: pointer;
-      color: var(--text-primary);
-      font-size: 0.75rem;
-      align-self: flex-end;
+      background: var(--btn-bg); border: none; padding: 0.6rem 1rem;
+      border-radius: 2rem; font-weight: 500; cursor: pointer;
+      color: var(--text-primary); font-size: 0.75rem; align-self: flex-end;
     }
     @media (min-width: 768px) { .reset-btn { align-self: center; } }
     .reset-btn:active { transform: scale(0.96); background: var(--btn-hover); }
 
-    /* Legend */
+    /* === LEGEND === */
     .legend-bar {
-      background: var(--bg-card);
-      border-radius: 0.9rem;
-      padding: 0.7rem 0.85rem;
-      margin-top: 0.25rem;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.5rem 0.85rem;
-      font-size: 0.65rem;
-      color: var(--legend-text);
+      background: var(--bg-card); border-radius: 0.9rem;
+      padding: 0.7rem 0.85rem; margin-top: 0.25rem;
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 0.5rem 0.85rem; font-size: 0.65rem; color: var(--legend-text);
       box-shadow: 0 4px 12px var(--shadow-sm);
     }
-    .legend-dot {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      border-radius: 3px;
-      margin-right: 4px;
-    }
+    .legend-dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; }
     .legend-item { display: inline-flex; align-items: center; }
 
-    /* Modal */
+    /* === MODAL === */
     .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(4px);
-      display: flex;
-      align-items: flex-end; /* bottom sheet on mobile */
-      justify-content: center;
-      z-index: 2000;
-      visibility: hidden;
-      opacity: 0;
-      transition: visibility 0.2s, opacity 0.2s ease;
-      padding: 0;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px); display: flex;
+      align-items: flex-end; justify-content: center;
+      z-index: 2000; visibility: hidden; opacity: 0;
+      transition: visibility 0.2s, opacity 0.2s ease; padding: 0;
     }
-    @media (min-width: 600px) {
-      .modal { align-items: center; padding: 1rem; }
-    }
+    @media (min-width: 600px) { .modal { align-items: center; padding: 1rem; } }
     .modal.active { visibility: visible; opacity: 1; }
 
     .modal-content {
-      background: var(--modal-bg);
-      border-radius: 1.5rem 1.5rem 0 0;
-      max-width: 100%;
-      width: 100%;
+      background: var(--modal-bg); border-radius: 1.5rem 1.5rem 0 0;
+      max-width: 100%; width: 100%;
       padding: 1.25rem 1.25rem max(1.25rem, env(safe-area-inset-bottom, 1.25rem));
       box-shadow: 0 -8px 30px var(--shadow);
-      animation: modalSlideUp 0.25s ease;
-      max-height: 92vh;
-      overflow-y: auto;
+      animation: modalUp 0.25s ease; max-height: 92vh; overflow-y: auto;
     }
     @media (min-width: 600px) {
-      .modal-content {
-        border-radius: 1.5rem;
-        max-width: 420px;
-        animation: modalSlideIn 0.25s ease;
-        padding: 1.5rem;
-      }
+      .modal-content { border-radius: 1.5rem; max-width: 420px; animation: modalIn 0.25s ease; padding: 1.5rem; }
     }
+    @keyframes modalUp { from { opacity:0; transform: translateY(40px); } to { opacity:1; transform: translateY(0); } }
+    @keyframes modalIn { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
 
-    @keyframes modalSlideUp {
-      from { opacity: 0; transform: translateY(40px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes modalSlideIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Modal drag handle for mobile */
-    .modal-handle {
-      width: 40px;
-      height: 4px;
-      background: var(--border-color);
-      border-radius: 2px;
-      margin: 0 auto 1rem;
-    }
+    .modal-handle { width: 40px; height: 4px; background: var(--border-color); border-radius: 2px; margin: 0 auto 1rem; }
     @media (min-width: 600px) { .modal-handle { display: none; } }
 
     .input-group { margin-bottom: 0.9rem; }
     .input-group label { font-size: 0.75rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.4rem; display: block; }
     .hours-input {
-      width: 100%;
-      padding: 0.65rem;
-      border: 2px solid var(--input-border);
-      border-radius: 1.2rem;
-      font-size: 1rem;
-      text-align: center;
-      background: var(--cell-bg);
-      color: var(--text-primary);
+      width: 100%; padding: 0.65rem; border: 2px solid var(--input-border);
+      border-radius: 1.2rem; font-size: 1rem; text-align: center;
+      background: var(--cell-bg); color: var(--text-primary);
     }
     .hours-input:focus { outline: none; border-color: #2c7da0; }
     .radio-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.3rem; }
     .radio-group label {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-size: 0.72rem;
-      padding: 0.25rem 0.5rem;
-      border-radius: 1.5rem;
-      background: var(--radio-bg);
-      color: var(--text-primary);
-      cursor: pointer;
+      display: flex; align-items: center; gap: 0.35rem; font-size: 0.72rem;
+      padding: 0.25rem 0.5rem; border-radius: 1.5rem; background: var(--radio-bg);
+      color: var(--text-primary); cursor: pointer;
     }
     .code-buttons { display: flex; gap: 0.4rem; margin-top: 0.5rem; flex-wrap: wrap; }
     .code-btn {
-      background: var(--btn-bg);
-      border: 1px solid var(--input-border);
-      padding: 0.4rem 0.7rem;
-      border-radius: 2rem;
-      font-size: 0.68rem;
-      font-weight: 600;
-      cursor: pointer;
-      flex: 1;
-      text-align: center;
-      color: var(--text-primary);
+      background: var(--btn-bg); border: 1px solid var(--input-border);
+      padding: 0.4rem 0.7rem; border-radius: 2rem; font-size: 0.68rem;
+      font-weight: 600; cursor: pointer; flex: 1; text-align: center; color: var(--text-primary);
     }
     .code-btn:active { transform: scale(0.96); }
     .modal-buttons { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.1rem; }
@@ -535,37 +339,19 @@
     .cancel-btn { background: var(--btn-bg); color: var(--text-primary); }
     .hours-total-hint { font-size: 0.62rem; color: var(--text-muted); margin-top: 4px; }
 
-    /* Install prompt */
+    /* === INSTALL PROMPT === */
     .install-prompt {
-      position: fixed;
-      bottom: 80px;
-      right: 16px;
-      background: var(--bg-card);
-      border-radius: 1rem;
-      padding: 0.75rem 1rem;
-      box-shadow: 0 4px 12px var(--shadow);
-      border-left: 4px solid #2c7da0;
-      z-index: 999;
-      font-size: 0.75rem;
-      max-width: 240px;
-      color: var(--text-primary);
-      animation: slideInRight 0.3s ease;
+      position: fixed; bottom: 80px; right: 16px;
+      background: var(--bg-card); border-radius: 1rem; padding: 0.75rem 1rem;
+      box-shadow: 0 4px 12px var(--shadow); border-left: 4px solid #2c7da0;
+      z-index: 999; font-size: 0.75rem; max-width: 240px; color: var(--text-primary);
       display: none;
     }
-    .install-prompt.show { display: block; }
-    @keyframes slideInRight {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
+    .install-prompt.show { display: block; animation: slideInRight 0.3s ease; }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     .install-prompt button {
-      background: #2c7da0;
-      color: white;
-      border: none;
-      padding: 0.3rem 0.8rem;
-      border-radius: 1rem;
-      margin-top: 0.5rem;
-      cursor: pointer;
-      font-size: 0.7rem;
+      background: #2c7da0; color: white; border: none; padding: 0.3rem 0.8rem;
+      border-radius: 1rem; margin-top: 0.5rem; cursor: pointer; font-size: 0.7rem;
     }
   </style>
 </head>
@@ -576,9 +362,9 @@
   </div>
 
   <div class="dashboard">
-    <div class="calendar-card">
+    <div class="calendar-card" id="calendarCard">
       <div class="calendar-header">
-        <div class="month-year" id="monthYearDisplay">March 2026</div>
+        <div class="month-year" id="monthYearDisplay">April 2026</div>
         <div class="nav-buttons">
           <button class="nav-btn" id="prevMonthBtn">← Prev</button>
           <button class="nav-btn today-btn" id="todayBtn">Today</button>
@@ -586,26 +372,22 @@
         </div>
       </div>
       <div class="weekdays">
-        <div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div>
-        <div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div><div class="weekday">Sun</div>
+        <div>Mon</div><div>Tue</div><div>Wed</div>
+        <div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
       </div>
-      <div id="calendarGrid" class="calendar-grid"></div>
+      <div class="calendar-grid-wrapper">
+        <div id="calendarGrid" class="calendar-grid"></div>
+      </div>
     </div>
 
     <div class="salary-panel">
       <div class="cutoff-card first">
         <div class="cutoff-title">📆 FIRST CUT-OFF (Days 1–15)</div>
-        <div class="cutoff-totals">
-          <div class="cutoff-hours" id="firstHours">0 <small>hrs</small></div>
-          <div class="cutoff-salary" id="firstSalary">₱ 0.00</div>
-        </div>
+        <div class="cutoff-totals" id="firstTotals"></div>
       </div>
       <div class="cutoff-card second">
         <div class="cutoff-title">📆 SECOND CUT-OFF (Days 16–31)</div>
-        <div class="cutoff-totals">
-          <div class="cutoff-hours" id="secondHours">0 <small>hrs</small></div>
-          <div class="cutoff-salary" id="secondSalary">₱ 0.00</div>
-        </div>
+        <div class="cutoff-totals" id="secondTotals"></div>
       </div>
       <button class="reset-btn" id="resetAllDataBtn">🗑️ Reset All Data</button>
     </div>
@@ -623,20 +405,20 @@
   <div id="editModal" class="modal">
     <div class="modal-content">
       <div class="modal-handle"></div>
-      <h3 id="modalDateLabel" style="color:var(--text-primary); font-size:1rem; margin-bottom:0.25rem;">📅 Date</h3>
-      <div class="date-sub" style="color:var(--text-muted); margin-bottom:1rem; font-size:0.75rem;" id="modalDateSub">Set normal &amp; extended hours</div>
+      <h3 id="modalDateLabel" style="color:var(--text-primary);font-size:1rem;margin-bottom:0.25rem;">📅 Date</h3>
+      <div id="modalDateSub" style="color:var(--text-muted);margin-bottom:1rem;font-size:0.75rem;">Set normal &amp; extended hours</div>
       <div class="input-group">
         <label>⏱️ Normal Hours (₱86/hr)</label>
-        <input type="number" id="normalHoursInput" class="hours-input" step="0.5" placeholder="e.g., 8, 7.5" value="0">
+        <input type="number" id="normalHoursInput" class="hours-input" step="0.5" placeholder="e.g., 8, 7.5">
       </div>
       <div class="input-group">
         <label>⚡ Extended Hours (₱86/hr)</label>
-        <input type="number" id="extendedHoursInput" class="hours-input" step="0.5" placeholder="e.g., 2, 3.5" value="0">
+        <input type="number" id="extendedHoursInput" class="hours-input" step="0.5" placeholder="e.g., 2, 3.5">
         <div class="hours-total-hint">Extra hours at same base rate</div>
       </div>
       <div class="input-group">
         <label>✨ Special Rate (applies to ALL hours this day)</label>
-        <div class="radio-group" id="rateTypeGroup">
+        <div class="radio-group">
           <label><input type="radio" name="rateType" value="normal" checked> Normal (1x)</label>
           <label><input type="radio" name="rateType" value="holiday"> 🎉 Holiday +30% (1.3x)</label>
           <label><input type="radio" name="rateType" value="double"> 💰 Double Pay (2x)</label>
@@ -659,287 +441,294 @@
   </div>
 
   <script>
-    // ==================== SERVICE WORKER ====================
+    /* === SERVICE WORKER === */
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        const swCode = `
-          const CACHE_NAME = 'smartpay-v1';
-          const urlsToCache = ['/', '/index.html', '/icon.png'];
-          self.addEventListener('install', event => {
-            event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)));
-            self.skipWaiting();
-          });
-          self.addEventListener('fetch', event => {
-            event.respondWith(
-              caches.match(event.request).then(response => {
-                if (response) return response;
-                return fetch(event.request).then(response => {
-                  if (!response || response.status !== 200 || response.type !== 'basic') return response;
-                  const responseToCache = response.clone();
-                  caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseToCache));
-                  return response;
-                });
-              }).catch(() => caches.match('/'))
-            );
-          });
-          self.addEventListener('activate', event => { event.waitUntil(clients.claim()); });
-        `;
-        const blob = new Blob([swCode], {type: 'application/javascript'});
-        navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+        const sw = `const C='sp-v2',U=['/','/index.html','/icon.png'];self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(U)));self.skipWaiting();});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)).catch(()=>caches.match('/')));});self.addEventListener('activate',e=>{e.waitUntil(clients.claim());});`;
+        navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
       });
     }
 
-    // ==================== HELPERS ====================
-    function formatHours(hours) {
-      if (Number.isInteger(hours)) return hours.toLocaleString();
-      return hours.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    /* === HAPTIC === */
+    const haptic = (p=[8]) => navigator.vibrate && navigator.vibrate(p);
+
+    /* === FORMAT === */
+    const fmtHours = h => Number.isInteger(h) ? h.toLocaleString() : h.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1});
+    const fmtSalary = v => v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+
+    /* === COUNT-UP ANIMATION === */
+    function countUp(el, from, to, ms, fmt) {
+      const t0 = performance.now();
+      const run = now => {
+        const p = Math.min((now-t0)/ms, 1);
+        const ease = 1 - Math.pow(2, -10*p);
+        el.textContent = fmt(from + (to-from)*ease);
+        if (p < 1) requestAnimationFrame(run);
+        else el.textContent = fmt(to);
+      };
+      requestAnimationFrame(run);
     }
 
-    // Format currency with commas, e.g. 1,234.56
-    function formatSalary(amount) {
-      return amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-
-    // ==================== APP LOGIC ====================
-    const BASE_RATE = 86.00;
-    const HOLIDAY_MULTIPLIER = 1.30;
-    const DOUBLE_MULTIPLIER = 2.0;
-
+    /* === STATE === */
+    const BASE = 86, HM = 1.3, DM = 2;
     let entriesMap = new Map();
-    let currentDisplayYear = new Date().getFullYear();
-    let currentDisplayMonth = new Date().getMonth();
+    let year = new Date().getFullYear();
+    let month = new Date().getMonth();
+    let prevF = {h:0,s:0}, prevS = {h:0,s:0};
 
-    const formatYMD = (y, m, d) => `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const loadData = () => {
-      const saved = localStorage.getItem("workEntriesEnhanced");
-      if (saved) try { entriesMap = new Map(Object.entries(JSON.parse(saved))); } catch(e) {}
+    const ymd = (y,m,d) => `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const load = () => { try { const s=localStorage.getItem('workEntriesEnhanced'); if(s) entriesMap=new Map(Object.entries(JSON.parse(s))); } catch(e){} };
+    const save = () => localStorage.setItem('workEntriesEnhanced', JSON.stringify(Object.fromEntries(entriesMap)));
+    const getE = (y,m,d) => entriesMap.get(ymd(y,m,d)) || null;
+    const setE = (y,m,d,data) => {
+      const k=ymd(y,m,d);
+      if (!data) entriesMap.delete(k);
+      else entriesMap.set(k,{...data,normalHours:data.normalHours||0,extendedHours:data.extendedHours||0});
+      save(); renderCalendar(); updatePanels();
     };
-    const persist = () => { localStorage.setItem("workEntriesEnhanced", JSON.stringify(Object.fromEntries(entriesMap))); };
-    const getEntry = (y,m,d) => entriesMap.get(formatYMD(y,m,d)) || null;
-    const setEntry = (y,m,d, data) => {
-      const key = formatYMD(y,m,d);
-      if (data === null) entriesMap.delete(key);
-      else entriesMap.set(key, { ...data, normalHours: data.normalHours||0, extendedHours: data.extendedHours||0 });
-      persist();
-      renderCalendar();
-      updateSalaryPanels();
+    const rate = t => t==='holiday'?BASE*HM:t==='double'?BASE*DM:BASE;
+    const totHrs = e => (e?.normalHours||0)+(e?.extendedHours||0);
+    const salOf = e => !e?0:totHrs(e)*rate(e.rateType||'normal');
+    const cutoff = (yr,mo,s,en) => {
+      let h=0,sal=0;
+      const last=new Date(yr,mo+1,0).getDate();
+      for(let d=s;d<=en&&d<=last;d++){const e=getE(yr,mo,d);if(e&&totHrs(e)>0){h+=totHrs(e);sal+=salOf(e);}}
+      return {h,sal};
     };
 
-    const getEffectiveRate = (type) => {
-      if(type === "holiday") return BASE_RATE * HOLIDAY_MULTIPLIER;
-      if(type === "double") return BASE_RATE * DOUBLE_MULTIPLIER;
-      return BASE_RATE;
-    };
-    const getTotalHours = (e) => (e?.normalHours||0) + (e?.extendedHours||0);
-    const calcEntrySalary = (e) => { if(!e) return 0; return getTotalHours(e) * getEffectiveRate(e.rateType || "normal"); };
+    /* === EMPTY STATE === */
+    const emptyHTML = () => `<div class="empty-state"><div class="empty-state-icon">📋</div><div class="empty-state-label">No hours logged yet</div><div class="empty-state-sub">Tap any day to add hours</div></div>`;
 
-    const calculateCutoffRange = (year, month, startDay, endDay) => {
-      let totalHours = 0, totalSalary = 0;
-      const lastDate = new Date(year, month+1, 0).getDate();
-      for(let d=startDay; d<=endDay && d<=lastDate; d++) {
-        const entry = getEntry(year, month, d);
-        if(entry && getTotalHours(entry)>0) {
-          totalHours += getTotalHours(entry);
-          totalSalary += calcEntrySalary(entry);
+    /* === UPDATE PANELS === */
+    const updatePanels = () => {
+      const last = new Date(year,month+1,0).getDate();
+      const f = cutoff(year,month,1,15);
+      const s = cutoff(year,month,16,last);
+      const hasData = f.h>0||f.sal>0||s.h>0||s.sal>0;
+
+      const render = (elId, prev, curr) => {
+        const el = document.getElementById(elId);
+        if (!hasData) { el.innerHTML = emptyHTML(); return {h:0,s:0}; }
+        const changed = curr.h!==prev.h || curr.sal!==prev.s;
+        if (changed) {
+          el.innerHTML = `<div class="cutoff-hours"><span class="ctr-h">${fmtHours(prev.h)}</span> <small>hrs</small></div><div class="cutoff-salary">₱ <span class="ctr-s">${fmtSalary(prev.s)}</span></div>`;
+          countUp(el.querySelector('.ctr-h'), prev.h, curr.h, 480, v=>fmtHours(Math.round(v*10)/10));
+          countUp(el.querySelector('.ctr-s'), prev.s, curr.sal, 480, fmtSalary);
+          // pop
+          setTimeout(()=>{
+            el.querySelector('.cutoff-hours')?.classList.add('num-pop');
+            el.querySelector('.cutoff-salary')?.classList.add('num-pop');
+          }, 60);
         }
-      }
-      return { totalHours, totalSalary };
+        return {h:curr.h, s:curr.sal};
+      };
+
+      prevF = render('firstTotals',  prevF, f);
+      prevS = render('secondTotals', prevS, s);
     };
 
-    const updateSalaryPanels = () => {
-      const lastDay = new Date(currentDisplayYear, currentDisplayMonth+1, 0).getDate();
-      const first = calculateCutoffRange(currentDisplayYear, currentDisplayMonth, 1, 15);
-      const second = calculateCutoffRange(currentDisplayYear, currentDisplayMonth, 16, lastDay);
+    /* === RENDER CALENDAR === */
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-      document.getElementById("firstHours").innerHTML = formatHours(first.totalHours) + " <small>hrs</small>";
-      document.getElementById("secondHours").innerHTML = formatHours(second.totalHours) + " <small>hrs</small>";
-      // Salary formatted with commas
-      document.getElementById("firstSalary").innerHTML = `₱ ${formatSalary(first.totalSalary)}`;
-      document.getElementById("secondSalary").innerHTML = `₱ ${formatSalary(second.totalSalary)}`;
-    };
-
-    const renderCalendar = () => {
-      const year = currentDisplayYear, month = currentDisplayMonth;
-      const firstDay = new Date(year, month, 1);
-      let startWeekday = firstDay.getDay();
-      let daysFromPrev = startWeekday === 0 ? 6 : startWeekday - 1;
-      const prevMonthDate = new Date(year, month, 0);
-      const prevDaysCount = prevMonthDate.getDate();
-      const prevYear = prevMonthDate.getFullYear(), prevMonth = prevMonthDate.getMonth();
-      const daysInCurrent = new Date(year, month+1, 0).getDate();
+    const renderCalendar = (dir) => {
+      const fd = new Date(year,month,1);
+      const dow = fd.getDay();
+      const fromPrev = dow===0?6:dow-1;
+      const pd = new Date(year,month,0);
+      const pDays=pd.getDate(), pY=pd.getFullYear(), pM=pd.getMonth();
+      const dCurr = new Date(year,month+1,0).getDate();
       const cells = [];
+      for(let i=0;i<fromPrev;i++) cells.push({y:pY,m:pM,d:pDays-fromPrev+i+1,cur:false});
+      for(let d=1;d<=dCurr;d++) cells.push({y:year,m:month,d,cur:true});
+      const nx=new Date(year,month+1,1);
+      for(let i=1;i<=42-cells.length;i++) cells.push({y:nx.getFullYear(),m:nx.getMonth(),d:i,cur:false});
 
-      for(let i=0; i<daysFromPrev; i++) {
-        cells.push({ year: prevYear, month: prevMonth, day: prevDaysCount - daysFromPrev + i + 1, isCurrent: false });
-      }
-      for(let d=1; d<=daysInCurrent; d++) cells.push({ year, month, day: d, isCurrent: true });
-      let remaining = 42 - cells.length;
-      let next = new Date(year, month+1, 1);
-      for(let i=1; i<=remaining; i++) cells.push({ year: next.getFullYear(), month: next.getMonth(), day: i, isCurrent: false });
+      // Month label animation
+      const lbl = document.getElementById('monthYearDisplay');
+      lbl.classList.remove('month-anim');
+      void lbl.offsetWidth;
+      lbl.innerText = `${MONTHS[month]} ${year}`;
+      lbl.classList.add('month-anim');
 
-      const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-      document.getElementById("monthYearDisplay").innerText = `${monthNames[month]} ${year}`;
-      const grid = document.getElementById("calendarGrid");
-      grid.innerHTML = "";
+      // Grid slide
+      const grid = document.getElementById('calendarGrid');
+      grid.classList.remove('slide-from-right','slide-from-left');
+      void grid.offsetWidth;
+      if (dir==='next') grid.classList.add('slide-from-right');
+      else if (dir==='prev') grid.classList.add('slide-from-left');
+
+      grid.innerHTML = '';
       const today = new Date();
 
       cells.forEach(cell => {
-        const cellDiv = document.createElement("div");
-        cellDiv.className = "calendar-cell";
-        if(!cell.isCurrent) cellDiv.classList.add("other-month");
-        const isToday = (cell.year===today.getFullYear() && cell.month===today.getMonth() && cell.day===today.getDate());
-        if(isToday) cellDiv.classList.add("today");
+        const div = document.createElement('div');
+        div.className = 'calendar-cell';
+        if (!cell.cur) div.classList.add('other-month');
+        if (cell.y===today.getFullYear()&&cell.m===today.getMonth()&&cell.d===today.getDate()) div.classList.add('today');
 
-        const daySpan = document.createElement("div");
-        daySpan.className = "day-number";
-        daySpan.innerText = cell.day;
-        cellDiv.appendChild(daySpan);
+        const ds = document.createElement('div');
+        ds.className = 'day-number'; ds.innerText = cell.d;
+        div.appendChild(ds);
 
-        const entry = getEntry(cell.year, cell.month, cell.day);
-        if(entry) {
-          const badge = document.createElement("div");
-          badge.className = "entry-badge";
-          if(entry.customLabel === "rd") { badge.innerText = "RD"; badge.classList.add("restday"); }
-          else if(entry.customLabel === "ea") { badge.innerText = "EA"; badge.classList.add("ea"); }
+        const e = getE(cell.y,cell.m,cell.d);
+        if (e) {
+          const badge = document.createElement('div');
+          badge.className = 'entry-badge';
+          if (e.customLabel==='rd') { badge.innerText='RD'; badge.classList.add('restday'); }
+          else if (e.customLabel==='ea') { badge.innerText='EA'; badge.classList.add('ea'); }
           else {
-            const normal = entry.normalHours || 0, extended = entry.extendedHours || 0;
-            const total = normal + extended;
-            if(total > 0) {
-              let displayText = "";
-              if(normal>0 && extended>0) displayText = `${formatHours(normal)}+${formatHours(extended)}`;
-              else if(normal>0) displayText = `${formatHours(normal)}`;
-              else displayText = `${formatHours(extended)}ext`;
-
-              if(entry.rateType === "holiday") { displayText += " 🎉"; badge.classList.add("holiday"); }
-              else if(entry.rateType === "double") { displayText += " 2x"; badge.classList.add("holiday"); }
-              else if(extended>0) badge.classList.add("extended");
-              else badge.classList.add("normal");
-              badge.innerText = displayText;
-            } else { badge.innerText = "0h"; badge.classList.add("normal"); }
+            const n=e.normalHours||0, ex=e.extendedHours||0, tot=n+ex;
+            if (tot>0) {
+              let txt = n>0&&ex>0?`${fmtHours(n)}+${fmtHours(ex)}`:n>0?`${fmtHours(n)}`:`${fmtHours(ex)}ext`;
+              if (e.rateType==='holiday'){txt+=' 🎉';badge.classList.add('holiday');}
+              else if (e.rateType==='double'){txt+=' 2x';badge.classList.add('holiday');}
+              else if (ex>0) badge.classList.add('extended');
+              else badge.classList.add('normal');
+              badge.innerText = txt;
+            } else { badge.innerText='0h'; badge.classList.add('normal'); }
           }
-          cellDiv.appendChild(badge);
+          div.appendChild(badge);
         } else {
-          const hint = document.createElement("div");
-          hint.className = "edit-hint";
-          hint.innerText = "+";
-          cellDiv.appendChild(hint);
+          const hint = document.createElement('div');
+          hint.className='edit-hint'; hint.innerText='+';
+          div.appendChild(hint);
         }
-        cellDiv.addEventListener("click", () => openModal(cell.year, cell.month, cell.day));
-        grid.appendChild(cellDiv);
+
+        div.addEventListener('click', ()=>openModal(cell.y,cell.m,cell.d));
+        grid.appendChild(div);
       });
-      updateSalaryPanels();
+
+      updatePanels();
     };
 
-    let activeYear=null, activeMonth=null, activeDay=null;
-    const modal = document.getElementById("editModal");
-    const normalInput = document.getElementById("normalHoursInput");
-    const extendedInput = document.getElementById("extendedHoursInput");
+    /* === SWIPE === */
+    let tx=0, ty=0, moved=false;
+    const card = document.getElementById('calendarCard');
+
+    card.addEventListener('touchstart', e=>{
+      tx=e.touches[0].clientX; ty=e.touches[0].clientY; moved=false;
+    },{passive:true});
+
+    card.addEventListener('touchmove', ()=>{ moved=true; },{passive:true});
+
+    card.addEventListener('touchend', e=>{
+      if (!moved) return;
+      const dx=e.changedTouches[0].clientX-tx;
+      const dy=e.changedTouches[0].clientY-ty;
+      if (Math.abs(dx)<40||Math.abs(dy)>Math.abs(dx)*0.85) return;
+      haptic([6]);
+      dx<0 ? goNext('swipe') : goPrev('swipe');
+    },{passive:true});
+
+    /* === NAV === */
+    const goPrev = src => {
+      const nd=new Date(year,month-1,1); year=nd.getFullYear(); month=nd.getMonth();
+      renderCalendar('prev'); if(src!=='swipe') haptic([6]);
+    };
+    const goNext = src => {
+      const nd=new Date(year,month+1,1); year=nd.getFullYear(); month=nd.getMonth();
+      renderCalendar('next'); if(src!=='swipe') haptic([6]);
+    };
+    const goToday = () => {
+      const n=new Date(); year=n.getFullYear(); month=n.getMonth();
+      renderCalendar(); haptic([6]);
+    };
+
+    /* === MODAL === */
+    let aY=null,aM=null,aD=null;
+    const modal = document.getElementById('editModal');
+    const nIn = document.getElementById('normalHoursInput');
+    const exIn = document.getElementById('extendedHoursInput');
 
     const openModal = (y,m,d) => {
-      activeYear=y; activeMonth=m; activeDay=d;
-      const dateObj = new Date(y,m,d);
-      document.getElementById("modalDateLabel").innerText = `📅 ${dateObj.toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' })}`;
-      document.getElementById("modalDateSub").innerText = `Set normal & extended hours`;
-      const existing = getEntry(y,m,d);
-      if(existing && !existing.customLabel) {
-        normalInput.value = existing.normalHours;
-        extendedInput.value = existing.extendedHours;
-        if(existing.rateType === "holiday") document.querySelector('input[value="holiday"]').checked = true;
-        else if(existing.rateType === "double") document.querySelector('input[value="double"]').checked = true;
-        else document.querySelector('input[value="normal"]').checked = true;
-      } else {
-        normalInput.value = "";
-        extendedInput.value = "";
-        document.querySelector('input[value="normal"]').checked = true;
-      }
-      modal.classList.add("active");
-      setTimeout(() => normalInput.focus(), 150);
+      aY=y;aM=m;aD=d; haptic([8]);
+      const dt=new Date(y,m,d);
+      document.getElementById('modalDateLabel').innerText=`📅 ${dt.toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'})}`;
+      document.getElementById('modalDateSub').innerText='Set normal & extended hours';
+      const e=getE(y,m,d);
+      if (e&&!e.customLabel) {
+        nIn.value=e.normalHours; exIn.value=e.extendedHours;
+        document.querySelector(`input[value="${e.rateType||'normal'}"]`).checked=true;
+      } else { nIn.value=''; exIn.value=''; document.querySelector('input[value="normal"]').checked=true; }
+      modal.classList.add('active');
+      setTimeout(()=>nIn.focus(),150);
     };
-    const closeModal = () => { modal.classList.remove("active"); activeYear=null; };
-    const saveEntryHandler = () => {
-      if(activeYear===null) return;
-      let normal = parseFloat(normalInput.value) || 0;
-      let extended = parseFloat(extendedInput.value) || 0;
-      if(isNaN(normal)) normal=0;
-      if(isNaN(extended)) extended=0;
-      const rate = document.querySelector('input[name="rateType"]:checked').value;
-      if(normal===0 && extended===0) setEntry(activeYear, activeMonth, activeDay, null);
-      else setEntry(activeYear, activeMonth, activeDay, { normalHours: normal, extendedHours: extended, rateType: rate, customLabel: null });
+
+    const closeModal = ()=>{ modal.classList.remove('active'); aY=null; };
+
+    const saveEntry = () => {
+      if(aY===null) return;
+      let n=parseFloat(nIn.value)||0, ex=parseFloat(exIn.value)||0;
+      const r=document.querySelector('input[name="rateType"]:checked').value;
+      haptic([10,30,10]);
+      if(n===0&&ex===0) setE(aY,aM,aD,null);
+      else setE(aY,aM,aD,{normalHours:n,extendedHours:ex,rateType:r,customLabel:null});
       closeModal();
     };
-    const applyCode = (code) => {
-      if(activeYear===null) return;
-      if(code === "rd") setEntry(activeYear, activeMonth, activeDay, { normalHours:0, extendedHours:0, rateType:"normal", customLabel:"rd" });
-      else if(code === "ea") setEntry(activeYear, activeMonth, activeDay, { normalHours:0, extendedHours:0, rateType:"normal", customLabel:"ea" });
-      else if(code === "clear") setEntry(activeYear, activeMonth, activeDay, null);
+
+    const applyCode = code => {
+      if(aY===null) return; haptic([10]);
+      if(code==='rd') setE(aY,aM,aD,{normalHours:0,extendedHours:0,rateType:'normal',customLabel:'rd'});
+      else if(code==='ea') setE(aY,aM,aD,{normalHours:0,extendedHours:0,rateType:'normal',customLabel:'ea'});
+      else if(code==='clear') setE(aY,aM,aD,null);
       closeModal();
     };
+
     const resetAll = () => {
-      if(confirm("⚠️ ERASE ALL recorded entries? This will remove all hours, rates, RD/EA codes.")) {
-        entriesMap.clear(); persist(); renderCalendar();
+      if(confirm('⚠️ ERASE ALL recorded entries? This removes all hours, rates, RD/EA codes.')) {
+        haptic([20,60,20]);
+        prevF={h:0,s:0}; prevS={h:0,s:0};
+        entriesMap.clear(); save(); renderCalendar();
       }
     };
 
-    const goPrev = () => { let nd = new Date(currentDisplayYear, currentDisplayMonth-1, 1); currentDisplayYear=nd.getFullYear(); currentDisplayMonth=nd.getMonth(); renderCalendar(); };
-    const goNext = () => { let nd = new Date(currentDisplayYear, currentDisplayMonth+1, 1); currentDisplayYear=nd.getFullYear(); currentDisplayMonth=nd.getMonth(); renderCalendar(); };
-    const goToday = () => { const n=new Date(); currentDisplayYear=n.getFullYear(); currentDisplayMonth=n.getMonth(); renderCalendar(); };
-
+    /* === THEME === */
     const initTheme = () => {
-      const saved = localStorage.getItem('theme');
-      document.documentElement.setAttribute('data-theme', saved === 'dark' ? 'dark' : 'light');
-      updateThemeIcon();
+      document.documentElement.setAttribute('data-theme', localStorage.getItem('theme')==='dark'?'dark':'light');
+      updateIcon();
     };
     const toggleTheme = () => {
-      const curr = document.documentElement.getAttribute('data-theme');
-      const newTheme = curr === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', newTheme);
-      localStorage.setItem('theme', newTheme);
-      updateThemeIcon();
+      const next = document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+      document.documentElement.setAttribute('data-theme',next);
+      localStorage.setItem('theme',next); updateIcon(); haptic([8]);
     };
-    const updateThemeIcon = () => {
-      const btn = document.getElementById('themeToggleBtn');
-      if(btn) btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
+    const updateIcon = () => {
+      const btn=document.getElementById('themeToggleBtn');
+      if(btn) btn.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';
     };
 
-    const showInstallPrompt = () => {
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-      if(isIOS && !isStandalone && !localStorage.getItem('installPromptDismissed')) {
-        setTimeout(() => document.getElementById('installPrompt').classList.add('show'), 3000);
-      }
+    /* === INSTALL PROMPT === */
+    const showInstall = () => {
+      const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isStandalone=window.matchMedia('(display-mode: standalone)').matches;
+      if(isIOS&&!isStandalone&&!localStorage.getItem('installPromptDismissed'))
+        setTimeout(()=>document.getElementById('installPrompt').classList.add('show'),3000);
     };
 
-    document.addEventListener("DOMContentLoaded", () => {
-      loadData();
-      initTheme();
-      const now = new Date();
-      currentDisplayYear = now.getFullYear();
-      currentDisplayMonth = now.getMonth();
+    /* === INIT === */
+    document.addEventListener('DOMContentLoaded', () => {
+      load(); initTheme();
+      const now=new Date(); year=now.getFullYear(); month=now.getMonth();
       renderCalendar();
 
-      const themeDiv = document.createElement('div');
-      themeDiv.className = 'theme-toggle';
-      themeDiv.innerHTML = '<button class="theme-toggle-btn" id="themeToggleBtn">🌙</button>';
-      document.body.appendChild(themeDiv);
+      const td=document.createElement('div');
+      td.className='theme-toggle';
+      td.innerHTML='<button class="theme-toggle-btn" id="themeToggleBtn">🌙</button>';
+      document.body.appendChild(td);
+      document.getElementById('themeToggleBtn').addEventListener('click',toggleTheme);
+      updateIcon();
 
-      document.getElementById("themeToggleBtn").addEventListener("click", toggleTheme);
-      document.getElementById("prevMonthBtn").addEventListener("click", goPrev);
-      document.getElementById("nextMonthBtn").addEventListener("click", goNext);
-      document.getElementById("todayBtn").addEventListener("click", goToday);
-      document.getElementById("resetAllDataBtn").addEventListener("click", resetAll);
-      document.getElementById("saveHoursBtn").addEventListener("click", saveEntryHandler);
-      document.getElementById("cancelModalBtn").addEventListener("click", closeModal);
-      modal.addEventListener("click", (e) => { if(e.target === modal) closeModal(); });
-      document.querySelectorAll(".code-btn").forEach(btn => {
-        btn.addEventListener("click", () => { const code = btn.getAttribute("data-code"); if(code) applyCode(code); });
-      });
-      normalInput.addEventListener("keypress", (e) => { if(e.key === "Enter") saveEntryHandler(); });
-      extendedInput.addEventListener("keypress", (e) => { if(e.key === "Enter") saveEntryHandler(); });
-
-      showInstallPrompt();
-
-      // Update icon after theme btn is added
-      updateThemeIcon();
+      document.getElementById('prevMonthBtn').addEventListener('click',()=>goPrev());
+      document.getElementById('nextMonthBtn').addEventListener('click',()=>goNext());
+      document.getElementById('todayBtn').addEventListener('click',goToday);
+      document.getElementById('resetAllDataBtn').addEventListener('click',resetAll);
+      document.getElementById('saveHoursBtn').addEventListener('click',saveEntry);
+      document.getElementById('cancelModalBtn').addEventListener('click',closeModal);
+      modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
+      document.querySelectorAll('.code-btn').forEach(b=>b.addEventListener('click',()=>{const c=b.getAttribute('data-code');if(c)applyCode(c);}));
+      nIn.addEventListener('keypress',e=>{if(e.key==='Enter')saveEntry();});
+      exIn.addEventListener('keypress',e=>{if(e.key==='Enter')saveEntry();});
+      showInstall();
     });
   </script>
 </body>
