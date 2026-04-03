@@ -9,11 +9,8 @@
   <meta name="theme-color" content="#2c3e50">
   <meta name="description" content="Work hours tracker with salary calculator - smooth theme transitions">
   
-  <!-- YOUR CUSTOM IMAGE ICON - Replace "icon.png" with your actual image filename -->
   <link rel="apple-touch-icon" href="icon.png">
   <link rel="icon" type="image/png" href="icon.png">
-  
-  <!-- PWA Manifest with your custom image -->
   <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22SmartPay%20Work%20Logger%22,%22short_name%22:%22SmartPay%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22theme_color%22:%22#2c3e50%22,%22background_color%22:%22#ffffff%22,%22icons%22:[{%22src%22:%22icon.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
   
   <title>SmartPay · Work Logger</title>
@@ -27,13 +24,12 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* SMOOTH TRANSITION for all themed properties */
     :root {
       --transition-duration: 0.4s;
       --transition-easing: cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
 
-    /* Base light theme (default) */
+    /* Base light theme */
     :root {
       --bg-primary: linear-gradient(135deg, #f5f9ff 0%, #eef2f8 100%);
       --bg-card: rgba(255, 255, 255, 0.98);
@@ -65,7 +61,7 @@
       --legend-text: #5c6f87;
     }
 
-    /* Dark theme with same variable names - smooth transition */
+    /* Dark theme */
     [data-theme="dark"] {
       --bg-primary: linear-gradient(135deg, #1a1f2e 0%, #0f1219 100%);
       --bg-card: rgba(30, 35, 48, 0.98);
@@ -97,36 +93,29 @@
       --legend-text: #9aa9c1;
     }
 
-    /* Apply transitions to all elements that use theme variables */
     * {
       transition: 
         background-color var(--transition-duration) var(--transition-easing),
         background var(--transition-duration) var(--transition-easing),
         border-color var(--transition-duration) var(--transition-easing),
         color var(--transition-duration) var(--transition-easing),
-        box-shadow var(--transition-duration) var(--transition-easing),
-        fill var(--transition-duration) var(--transition-easing),
-        stroke var(--transition-duration) var(--transition-easing);
+        box-shadow var(--transition-duration) var(--transition-easing);
     }
 
-    /* Specific transitions for gradient backgrounds (smooth crossfade) */
     body, .calendar-card, .salary-panel, .legend-bar, .modal-content {
       transition: background var(--transition-duration) var(--transition-easing), 
                   box-shadow var(--transition-duration) var(--transition-easing),
                   border-color var(--transition-duration) var(--transition-easing);
     }
 
-    /* Buttons and interactive elements get faster transitions */
     .nav-btn, .reset-btn, .code-btn, .modal-btn, .theme-toggle-btn, .calendar-cell {
       transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
 
-    /* Calendar cells need individual background transition */
     .calendar-cell {
       transition: background 0.2s ease, transform 0.1s ease;
     }
 
-    /* Fix for gradient background smoothness */
     body::before {
       content: '';
       position: fixed;
@@ -142,8 +131,19 @@
     body {
       font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
       min-height: 100vh;
-      padding: 1rem;
+      /* Safe area support for notched phones */
+      padding: env(safe-area-inset-top, 0.75rem) env(safe-area-inset-right, 0.75rem) env(safe-area-inset-bottom, 5rem) env(safe-area-inset-left, 0.75rem);
       position: relative;
+    }
+
+    /* Mobile first padding */
+    @media (max-width: 767px) {
+      body {
+        padding-top: 0.75rem;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        padding-bottom: 5rem; /* space for fixed theme toggle */
+      }
     }
 
     @media (min-width: 768px) {
@@ -155,16 +155,16 @@
       margin: 0 auto;
     }
 
-    /* Theme Toggle Button with smooth animation */
+    /* Theme Toggle Button */
     .theme-toggle {
       position: fixed;
-      bottom: 1.5rem;
+      bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem));
       right: 1.5rem;
       z-index: 1000;
     }
     .theme-toggle-btn {
-      width: 56px;
-      height: 56px;
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
       background: var(--bg-card);
       border: 1px solid var(--border-color);
@@ -172,30 +172,23 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       box-shadow: 0 4px 12px var(--shadow-sm);
       backdrop-filter: blur(10px);
       color: var(--text-primary);
-      transform: scale(1);
     }
-    .theme-toggle-btn:active {
-      transform: scale(0.92);
-    }
-    /* Hover effect for desktop */
+    .theme-toggle-btn:active { transform: scale(0.92); }
     @media (min-width: 768px) {
-      .theme-toggle-btn:hover {
-        transform: scale(1.08);
-        box-shadow: 0 6px 20px var(--shadow);
-      }
+      .theme-toggle-btn:hover { transform: scale(1.08); box-shadow: 0 6px 20px var(--shadow); }
     }
 
     /* Calendar Card */
     .calendar-card {
       background: var(--bg-card);
-      border-radius: 1.5rem;
-      box-shadow: 0 20px 40px -12px var(--shadow), 0 2px 8px var(--shadow-sm);
+      border-radius: 1.25rem;
+      box-shadow: 0 8px 24px -6px var(--shadow), 0 2px 8px var(--shadow-sm);
       overflow: hidden;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1rem;
     }
     @media (min-width: 768px) {
       .calendar-card { border-radius: 2rem; margin-bottom: 1.5rem; }
@@ -203,39 +196,44 @@
 
     .calendar-header {
       background: var(--bg-header);
-      padding: 1rem 1.25rem;
+      padding: 0.75rem 1rem;
       border-bottom: 1px solid var(--border-color);
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 0.75rem;
+      gap: 0.5rem;
+      flex-wrap: nowrap;
     }
     @media (min-width: 768px) {
       .calendar-header { padding: 1.25rem 1.8rem; }
     }
 
     .month-year {
-      font-size: 1.35rem;
+      font-size: 1.15rem;
       font-weight: 700;
       background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
       background-clip: text;
       -webkit-background-clip: text;
       color: transparent;
-      transition: background 0.3s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
     @media (min-width: 768px) { .month-year { font-size: 1.7rem; } }
 
-    .nav-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .nav-buttons { display: flex; gap: 0.4rem; flex-shrink: 0; }
     .nav-btn {
       background: var(--btn-bg);
       border: none;
       font-weight: 600;
-      padding: 0.5rem 1rem;
+      padding: 0.4rem 0.75rem;
       border-radius: 2rem;
       cursor: pointer;
       color: var(--text-primary);
-      font-size: 0.85rem;
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+    @media (min-width: 768px) {
+      .nav-btn { padding: 0.5rem 1rem; font-size: 0.85rem; }
     }
     .nav-btn:active { transform: scale(0.96); background: var(--btn-hover); }
     .today-btn { background: var(--btn-today); color: white; }
@@ -245,58 +243,78 @@
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       background: var(--weekday-bg);
-      padding: 0.6rem 0;
+      padding: 0.5rem 0;
       border-bottom: 1px solid var(--border-color);
       text-align: center;
       font-weight: 600;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       color: var(--text-secondary);
     }
-    @media (min-width: 768px) { .weekday { font-size: 0.85rem; } }
+    @media (min-width: 768px) { .weekdays { font-size: 0.85rem; } }
 
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       background: var(--cell-bg);
     }
+
+    /* Mobile: compact cells */
     .calendar-cell {
-      aspect-ratio: 1 / 0.95;
-      min-height: 85px;
-      padding: 0.4rem;
+      min-height: 60px;
+      padding: 0.3rem 0.25rem;
       border-right: 1px solid var(--cell-border);
       border-bottom: 1px solid var(--cell-border);
       cursor: pointer;
       display: flex;
       flex-direction: column;
       background: var(--cell-bg);
+      overflow: hidden;
+    }
+    @media (min-width: 480px) {
+      .calendar-cell { min-height: 75px; padding: 0.35rem; }
+    }
+    @media (min-width: 768px) {
+      .calendar-cell { min-height: 95px; padding: 0.5rem; }
     }
     .calendar-cell:active { background: var(--cell-hover); transform: scale(0.98); }
+
     .day-number {
-      font-size: 0.9rem;
+      font-size: 0.78rem;
       font-weight: 600;
-      width: 1.8rem;
-      height: 1.8rem;
+      width: 1.55rem;
+      height: 1.55rem;
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 2rem;
-      margin-bottom: 0.2rem;
+      margin-bottom: 0.15rem;
       color: var(--text-primary);
+      flex-shrink: 0;
+    }
+    @media (min-width: 768px) {
+      .day-number { font-size: 0.9rem; width: 1.8rem; height: 1.8rem; }
     }
     .today .day-number { background: var(--btn-today); color: white; box-shadow: 0 2px 6px var(--shadow); }
     .other-month .day-number { color: var(--text-muted); }
 
     .entry-badge {
       background: var(--badge-bg);
-      border-radius: 0.75rem;
-      padding: 0.2rem 0.4rem;
-      font-size: 0.65rem;
+      border-radius: 0.5rem;
+      padding: 0.15rem 0.3rem;
+      font-size: 0.58rem;
       font-weight: 600;
       text-align: center;
-      margin-top: 0.2rem;
-      border-left: 3px solid;
+      margin-top: 0.1rem;
+      border-left: 2px solid;
       word-break: break-word;
       color: var(--text-primary);
+      line-height: 1.3;
+    }
+    @media (min-width: 480px) {
+      .entry-badge { font-size: 0.62rem; padding: 0.18rem 0.35rem; }
+    }
+    @media (min-width: 768px) {
+      .entry-badge { font-size: 0.65rem; padding: 0.2rem 0.4rem; border-left-width: 3px; border-radius: 0.75rem; }
     }
     .entry-badge.normal { border-left-color: #2c7da0; background: var(--badge-normal); }
     .entry-badge.extended { border-left-color: #e67e22; background: var(--badge-extended); }
@@ -304,36 +322,74 @@
     .entry-badge.restday { border-left-color: #27ae60; background: var(--badge-rd); }
     .entry-badge.ea { border-left-color: #95a5a6; background: var(--badge-ea); }
 
-    .edit-hint { font-size: 0.55rem; color: var(--text-muted); margin-top: 0.2rem; text-align: center; }
+    .edit-hint { font-size: 0.5rem; color: var(--text-muted); margin-top: auto; text-align: center; }
+    @media (min-width: 768px) { .edit-hint { font-size: 0.55rem; } }
 
-    /* Salary Panel */
+    /* Salary Panel — stacked on mobile, row on desktop */
     .salary-panel {
       background: var(--bg-card);
-      border-radius: 1.25rem;
-      padding: 1rem 1.25rem;
+      border-radius: 1.1rem;
+      padding: 0.85rem 1rem;
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
       box-shadow: 0 8px 20px var(--shadow-sm);
-      margin-bottom: 1rem;
+      margin-bottom: 0.85rem;
     }
-    @media (min-width: 768px) { 
-      .salary-panel { flex-direction: row; align-items: center; justify-content: space-between; }
+    @media (min-width: 768px) {
+      .salary-panel {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        border-radius: 1.25rem;
+        padding: 1rem 1.25rem;
+      }
     }
 
     .cutoff-card {
       background: var(--cutoff-bg);
-      border-radius: 1rem;
-      padding: 0.85rem 1rem;
+      border-radius: 0.85rem;
+      padding: 0.75rem 1rem;
       flex: 1;
       border-left: 4px solid;
     }
     .cutoff-card.first { border-left-color: #2c7da0; }
     .cutoff-card.second { border-left-color: #5a6e8a; }
-    .cutoff-title { font-size: 0.7rem; text-transform: uppercase; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.4rem; }
-    .cutoff-hours { font-size: 1.4rem; font-weight: 700; color: var(--text-primary); }
-    .cutoff-salary { font-size: 1.1rem; font-weight: 700; color: #2c7da0; margin-top: 0.2rem; }
-    .rate-info { font-size: 0.6rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+    .cutoff-title {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 0.35rem;
+    }
+    @media (min-width: 768px) { .cutoff-title { font-size: 0.7rem; } }
+
+    /* ── Totals row: hours + salary side by side on mobile ── */
+    .cutoff-totals {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .cutoff-hours {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+    @media (min-width: 768px) { .cutoff-hours { font-size: 1.4rem; } }
+
+    .cutoff-salary {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2c7da0;
+      white-space: nowrap;
+    }
+    @media (min-width: 768px) { .cutoff-salary { font-size: 1.1rem; } }
+
+    .rate-info { font-size: 0.6rem; color: var(--text-muted); margin-top: 0.2rem; }
 
     .reset-btn {
       background: var(--btn-bg);
@@ -344,31 +400,33 @@
       cursor: pointer;
       color: var(--text-primary);
       font-size: 0.75rem;
+      align-self: flex-end;
     }
+    @media (min-width: 768px) { .reset-btn { align-self: center; } }
     .reset-btn:active { transform: scale(0.96); background: var(--btn-hover); }
 
     /* Legend */
     .legend-bar {
       background: var(--bg-card);
-      border-radius: 1rem;
-      padding: 0.8rem 1rem;
-      margin-top: 0.5rem;
+      border-radius: 0.9rem;
+      padding: 0.7rem 0.85rem;
+      margin-top: 0.25rem;
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 1rem;
-      font-size: 0.7rem;
+      gap: 0.5rem 0.85rem;
+      font-size: 0.65rem;
       color: var(--legend-text);
       box-shadow: 0 4px 12px var(--shadow-sm);
     }
     .legend-dot {
       display: inline-block;
-      width: 12px;
-      height: 12px;
-      border-radius: 4px;
-      margin-right: 5px;
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      margin-right: 4px;
     }
-    .legend-item { display: inline-flex; align-items: center; gap: 4px; margin-right: 12px; }
+    .legend-item { display: inline-flex; align-items: center; }
 
     /* Modal */
     .modal {
@@ -380,33 +438,63 @@
       background: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(4px);
       display: flex;
-      align-items: center;
+      align-items: flex-end; /* bottom sheet on mobile */
       justify-content: center;
       z-index: 2000;
       visibility: hidden;
       opacity: 0;
       transition: visibility 0.2s, opacity 0.2s ease;
-      padding: 1rem;
+      padding: 0;
+    }
+    @media (min-width: 600px) {
+      .modal { align-items: center; padding: 1rem; }
     }
     .modal.active { visibility: visible; opacity: 1; }
+
     .modal-content {
       background: var(--modal-bg);
-      border-radius: 1.5rem;
-      max-width: 420px;
+      border-radius: 1.5rem 1.5rem 0 0;
+      max-width: 100%;
       width: 100%;
-      padding: 1.5rem;
-      box-shadow: 0 25px 50px -12px var(--shadow);
-      animation: modalSlideIn 0.25s ease;
+      padding: 1.25rem 1.25rem max(1.25rem, env(safe-area-inset-bottom, 1.25rem));
+      box-shadow: 0 -8px 30px var(--shadow);
+      animation: modalSlideUp 0.25s ease;
+      max-height: 92vh;
+      overflow-y: auto;
+    }
+    @media (min-width: 600px) {
+      .modal-content {
+        border-radius: 1.5rem;
+        max-width: 420px;
+        animation: modalSlideIn 0.25s ease;
+        padding: 1.5rem;
+      }
+    }
+
+    @keyframes modalSlideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     @keyframes modalSlideIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .input-group { margin-bottom: 1rem; }
+
+    /* Modal drag handle for mobile */
+    .modal-handle {
+      width: 40px;
+      height: 4px;
+      background: var(--border-color);
+      border-radius: 2px;
+      margin: 0 auto 1rem;
+    }
+    @media (min-width: 600px) { .modal-handle { display: none; } }
+
+    .input-group { margin-bottom: 0.9rem; }
     .input-group label { font-size: 0.75rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.4rem; display: block; }
     .hours-input {
       width: 100%;
-      padding: 0.7rem;
+      padding: 0.65rem;
       border: 2px solid var(--input-border);
       border-radius: 1.2rem;
       font-size: 1rem;
@@ -415,25 +503,25 @@
       color: var(--text-primary);
     }
     .hours-input:focus { outline: none; border-color: #2c7da0; }
-    .radio-group { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.3rem; }
+    .radio-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.3rem; }
     .radio-group label {
       display: flex;
       align-items: center;
       gap: 0.35rem;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       padding: 0.25rem 0.5rem;
       border-radius: 1.5rem;
       background: var(--radio-bg);
       color: var(--text-primary);
       cursor: pointer;
     }
-    .code-buttons { display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
+    .code-buttons { display: flex; gap: 0.4rem; margin-top: 0.5rem; flex-wrap: wrap; }
     .code-btn {
       background: var(--btn-bg);
       border: 1px solid var(--input-border);
-      padding: 0.45rem 0.8rem;
+      padding: 0.4rem 0.7rem;
       border-radius: 2rem;
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 600;
       cursor: pointer;
       flex: 1;
@@ -441,17 +529,17 @@
       color: var(--text-primary);
     }
     .code-btn:active { transform: scale(0.96); }
-    .modal-buttons { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.25rem; }
-    .modal-btn { padding: 0.6rem 1.2rem; border-radius: 2rem; font-weight: 600; cursor: pointer; border: none; }
-    .save-btn { background: #2c7da0; color: white; }
+    .modal-buttons { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.1rem; }
+    .modal-btn { padding: 0.6rem 1.2rem; border-radius: 2rem; font-weight: 600; cursor: pointer; border: none; font-size: 0.85rem; }
+    .save-btn { background: #2c7da0; color: white; flex: 1; }
     .cancel-btn { background: var(--btn-bg); color: var(--text-primary); }
-    .hours-total-hint { font-size: 0.65rem; color: var(--text-muted); margin-top: 4px; }
-    
+    .hours-total-hint { font-size: 0.62rem; color: var(--text-muted); margin-top: 4px; }
+
     /* Install prompt */
     .install-prompt {
       position: fixed;
       bottom: 80px;
-      right: 20px;
+      right: 16px;
       background: var(--bg-card);
       border-radius: 1rem;
       padding: 0.75rem 1rem;
@@ -459,7 +547,8 @@
       border-left: 4px solid #2c7da0;
       z-index: 999;
       font-size: 0.75rem;
-      max-width: 250px;
+      max-width: 240px;
+      color: var(--text-primary);
       animation: slideInRight 0.3s ease;
       display: none;
     }
@@ -485,6 +574,7 @@
     📱 Install this app on your home screen for offline use!<br>
     <button onclick="document.getElementById('installPrompt').classList.remove('show');localStorage.setItem('installPromptDismissed','true')">Got it</button>
   </div>
+
   <div class="dashboard">
     <div class="calendar-card">
       <div class="calendar-header">
@@ -495,13 +585,28 @@
           <button class="nav-btn" id="nextMonthBtn">Next →</button>
         </div>
       </div>
-      <div class="weekdays"><div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div><div class="weekday">Sun</div></div>
+      <div class="weekdays">
+        <div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div>
+        <div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div><div class="weekday">Sun</div>
+      </div>
       <div id="calendarGrid" class="calendar-grid"></div>
     </div>
 
     <div class="salary-panel">
-      <div class="cutoff-card first"><div class="cutoff-title">📆 FIRST CUT-OFF (Days 1–15)</div><div class="cutoff-hours" id="firstHours">0 <small>hrs</small></div><div class="cutoff-salary" id="firstSalary">₱ 0.00</div></div>
-      <div class="cutoff-card second"><div class="cutoff-title">📆 SECOND CUT-OFF (Days 16–31)</div><div class="cutoff-hours" id="secondHours">0 <small>hrs</small></div><div class="cutoff-salary" id="secondSalary">₱ 0.00</div></div>
+      <div class="cutoff-card first">
+        <div class="cutoff-title">📆 FIRST CUT-OFF (Days 1–15)</div>
+        <div class="cutoff-totals">
+          <div class="cutoff-hours" id="firstHours">0 <small>hrs</small></div>
+          <div class="cutoff-salary" id="firstSalary">₱ 0.00</div>
+        </div>
+      </div>
+      <div class="cutoff-card second">
+        <div class="cutoff-title">📆 SECOND CUT-OFF (Days 16–31)</div>
+        <div class="cutoff-totals">
+          <div class="cutoff-hours" id="secondHours">0 <small>hrs</small></div>
+          <div class="cutoff-salary" id="secondSalary">₱ 0.00</div>
+        </div>
+      </div>
       <button class="reset-btn" id="resetAllDataBtn">🗑️ Reset All Data</button>
     </div>
 
@@ -517,92 +622,84 @@
 
   <div id="editModal" class="modal">
     <div class="modal-content">
-      <h3 id="modalDateLabel" style="color:var(--text-primary)">📅 Date</h3>
-      <div class="date-sub" style="color:var(--text-muted); margin-bottom:1rem" id="modalDateSub">Set normal & extended hours</div>
-      <div class="input-group"><label>⏱️ Normal Hours (₱86/hr)</label><input type="number" id="normalHoursInput" class="hours-input" step="0.5" placeholder="e.g., 8, 7.5" value="0"></div>
-      <div class="input-group"><label>⚡ Extended Hours (₱86/hr)</label><input type="number" id="extendedHoursInput" class="hours-input" step="0.5" placeholder="e.g., 2, 3.5" value="0"><div class="hours-total-hint">Extra hours at same base rate</div></div>
-      <div class="input-group"><label>✨ Special Rate (applies to ALL hours this day)</label><div class="radio-group" id="rateTypeGroup"><label><input type="radio" name="rateType" value="normal" checked> Normal (1x)</label><label><input type="radio" name="rateType" value="holiday"> 🎉 Holiday +30% (1.3x)</label><label><input type="radio" name="rateType" value="double"> 💰 Double Pay (2x)</label></div></div>
-      <div class="input-group"><label>📌 Quick Codes</label><div class="code-buttons"><button type="button" class="code-btn" data-code="rd">🟢 RD (Rest Day)</button><button type="button" class="code-btn" data-code="ea">🟠 EA (Absent)</button><button type="button" class="code-btn" data-code="clear">🗑️ Clear Entry</button></div><div class="hours-total-hint">⚠️ RD/EA sets hours to 0, no salary</div></div>
-      <div class="modal-buttons"><button class="modal-btn cancel-btn" id="cancelModalBtn">Cancel</button><button class="modal-btn save-btn" id="saveHoursBtn">💾 Save Entry</button></div>
+      <div class="modal-handle"></div>
+      <h3 id="modalDateLabel" style="color:var(--text-primary); font-size:1rem; margin-bottom:0.25rem;">📅 Date</h3>
+      <div class="date-sub" style="color:var(--text-muted); margin-bottom:1rem; font-size:0.75rem;" id="modalDateSub">Set normal &amp; extended hours</div>
+      <div class="input-group">
+        <label>⏱️ Normal Hours (₱86/hr)</label>
+        <input type="number" id="normalHoursInput" class="hours-input" step="0.5" placeholder="e.g., 8, 7.5" value="0">
+      </div>
+      <div class="input-group">
+        <label>⚡ Extended Hours (₱86/hr)</label>
+        <input type="number" id="extendedHoursInput" class="hours-input" step="0.5" placeholder="e.g., 2, 3.5" value="0">
+        <div class="hours-total-hint">Extra hours at same base rate</div>
+      </div>
+      <div class="input-group">
+        <label>✨ Special Rate (applies to ALL hours this day)</label>
+        <div class="radio-group" id="rateTypeGroup">
+          <label><input type="radio" name="rateType" value="normal" checked> Normal (1x)</label>
+          <label><input type="radio" name="rateType" value="holiday"> 🎉 Holiday +30% (1.3x)</label>
+          <label><input type="radio" name="rateType" value="double"> 💰 Double Pay (2x)</label>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>📌 Quick Codes</label>
+        <div class="code-buttons">
+          <button type="button" class="code-btn" data-code="rd">🟢 RD (Rest Day)</button>
+          <button type="button" class="code-btn" data-code="ea">🟠 EA (Absent)</button>
+          <button type="button" class="code-btn" data-code="clear">🗑️ Clear</button>
+        </div>
+        <div class="hours-total-hint">⚠️ RD/EA sets hours to 0, no salary</div>
+      </div>
+      <div class="modal-buttons">
+        <button class="modal-btn cancel-btn" id="cancelModalBtn">Cancel</button>
+        <button class="modal-btn save-btn" id="saveHoursBtn">💾 Save Entry</button>
+      </div>
     </div>
   </div>
 
   <script>
-    // ==================== SERVICE WORKER REGISTRATION ====================
+    // ==================== SERVICE WORKER ====================
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        // Inline service worker (blob URL approach)
         const swCode = `
           const CACHE_NAME = 'smartpay-v1';
-          const urlsToCache = [
-            '/',
-            '/index.html',
-            '/icon.png'
-          ];
-          
+          const urlsToCache = ['/', '/index.html', '/icon.png'];
           self.addEventListener('install', event => {
-            console.log('Service Worker installing...');
-            event.waitUntil(
-              caches.open(CACHE_NAME).then(cache => {
-                console.log('Opened cache');
-                return cache.addAll(urlsToCache);
-              })
-            );
+            event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)));
             self.skipWaiting();
           });
-          
           self.addEventListener('fetch', event => {
             event.respondWith(
               caches.match(event.request).then(response => {
-                if (response) {
-                  console.log('Serving from cache:', event.request.url);
-                  return response;
-                }
-                console.log('Fetching from network:', event.request.url);
+                if (response) return response;
                 return fetch(event.request).then(response => {
-                  if (!response || response.status !== 200 || response.type !== 'basic') {
-                    return response;
-                  }
+                  if (!response || response.status !== 200 || response.type !== 'basic') return response;
                   const responseToCache = response.clone();
-                  caches.open(CACHE_NAME).then(cache => {
-                    cache.put(event.request, responseToCache);
-                  });
+                  caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseToCache));
                   return response;
                 });
-              }).catch(() => {
-                console.log('Offline fallback for:', event.request.url);
-                return caches.match('/');
-              })
+              }).catch(() => caches.match('/'))
             );
           });
-          
-          self.addEventListener('activate', event => {
-            console.log('Service Worker activating...');
-            event.waitUntil(clients.claim());
-          });
+          self.addEventListener('activate', event => { event.waitUntil(clients.claim()); });
         `;
-        
         const blob = new Blob([swCode], {type: 'application/javascript'});
-        const swUrl = URL.createObjectURL(blob);
-        
-        navigator.serviceWorker.register(swUrl).then(registration => {
-          console.log('Service Worker registered with scope:', registration.scope);
-        }).catch(error => {
-          console.log('Service Worker registration failed:', error);
-        });
+        navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
       });
     }
-    
-    // ==================== HELPER: Format hours without unnecessary .0 ====================
+
+    // ==================== HELPERS ====================
     function formatHours(hours) {
-      // Check if it's a whole number
-      if (Number.isInteger(hours)) {
-        return hours.toString();
-      }
-      // Otherwise show with 1 decimal
-      return hours.toFixed(1);
+      if (Number.isInteger(hours)) return hours.toLocaleString();
+      return hours.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
     }
-    
+
+    // Format currency with commas, e.g. 1,234.56
+    function formatSalary(amount) {
+      return amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
     // ==================== APP LOGIC ====================
     const BASE_RATE = 86.00;
     const HOLIDAY_MULTIPLIER = 1.30;
@@ -613,7 +710,10 @@
     let currentDisplayMonth = new Date().getMonth();
 
     const formatYMD = (y, m, d) => `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const loadData = () => { const saved = localStorage.getItem("workEntriesEnhanced"); if (saved) try { entriesMap = new Map(Object.entries(JSON.parse(saved))); } catch(e) {} };
+    const loadData = () => {
+      const saved = localStorage.getItem("workEntriesEnhanced");
+      if (saved) try { entriesMap = new Map(Object.entries(JSON.parse(saved))); } catch(e) {}
+    };
     const persist = () => { localStorage.setItem("workEntriesEnhanced", JSON.stringify(Object.fromEntries(entriesMap))); };
     const getEntry = (y,m,d) => entriesMap.get(formatYMD(y,m,d)) || null;
     const setEntry = (y,m,d, data) => {
@@ -631,7 +731,7 @@
       return BASE_RATE;
     };
     const getTotalHours = (e) => (e?.normalHours||0) + (e?.extendedHours||0);
-    const calcEntrySalary = (e) => { if(!e) return 0; const hrs = getTotalHours(e); return hrs * getEffectiveRate(e.rateType || "normal"); };
+    const calcEntrySalary = (e) => { if(!e) return 0; return getTotalHours(e) * getEffectiveRate(e.rateType || "normal"); };
 
     const calculateCutoffRange = (year, month, startDay, endDay) => {
       let totalHours = 0, totalSalary = 0;
@@ -650,15 +750,12 @@
       const lastDay = new Date(currentDisplayYear, currentDisplayMonth+1, 0).getDate();
       const first = calculateCutoffRange(currentDisplayYear, currentDisplayMonth, 1, 15);
       const second = calculateCutoffRange(currentDisplayYear, currentDisplayMonth, 16, lastDay);
-      
-      // Format without unnecessary .0
-      let firstFormatted = formatHours(first.totalHours);
-      let secondFormatted = formatHours(second.totalHours);
-      
-      document.getElementById("firstHours").innerHTML = firstFormatted + " <small>hrs</small>";
-      document.getElementById("secondHours").innerHTML = secondFormatted + " <small>hrs</small>";
-      document.getElementById("firstSalary").innerHTML = `₱ ${first.totalSalary.toFixed(2)}`;
-      document.getElementById("secondSalary").innerHTML = `₱ ${second.totalSalary.toFixed(2)}`;
+
+      document.getElementById("firstHours").innerHTML = formatHours(first.totalHours) + " <small>hrs</small>";
+      document.getElementById("secondHours").innerHTML = formatHours(second.totalHours) + " <small>hrs</small>";
+      // Salary formatted with commas
+      document.getElementById("firstSalary").innerHTML = `₱ ${formatSalary(first.totalSalary)}`;
+      document.getElementById("secondSalary").innerHTML = `₱ ${formatSalary(second.totalSalary)}`;
     };
 
     const renderCalendar = () => {
@@ -673,8 +770,7 @@
       const cells = [];
 
       for(let i=0; i<daysFromPrev; i++) {
-        let dayNum = prevDaysCount - daysFromPrev + i + 1;
-        cells.push({ year: prevYear, month: prevMonth, day: dayNum, isCurrent: false });
+        cells.push({ year: prevYear, month: prevMonth, day: prevDaysCount - daysFromPrev + i + 1, isCurrent: false });
       }
       for(let d=1; d<=daysInCurrent; d++) cells.push({ year, month, day: d, isCurrent: true });
       let remaining = 42 - cells.length;
@@ -693,41 +789,39 @@
         if(!cell.isCurrent) cellDiv.classList.add("other-month");
         const isToday = (cell.year===today.getFullYear() && cell.month===today.getMonth() && cell.day===today.getDate());
         if(isToday) cellDiv.classList.add("today");
+
         const daySpan = document.createElement("div");
         daySpan.className = "day-number";
         daySpan.innerText = cell.day;
         cellDiv.appendChild(daySpan);
+
         const entry = getEntry(cell.year, cell.month, cell.day);
         if(entry) {
           const badge = document.createElement("div");
           badge.className = "entry-badge";
-          if(entry.customLabel === "rd") { badge.innerText = "RD (Rest Day)"; badge.classList.add("restday"); }
-          else if(entry.customLabel === "ea") { badge.innerText = "EA (Excused)"; badge.classList.add("ea"); }
+          if(entry.customLabel === "rd") { badge.innerText = "RD"; badge.classList.add("restday"); }
+          else if(entry.customLabel === "ea") { badge.innerText = "EA"; badge.classList.add("ea"); }
           else {
             const normal = entry.normalHours || 0, extended = entry.extendedHours || 0;
-            const total = normal+extended;
+            const total = normal + extended;
             if(total > 0) {
               let displayText = "";
-              // Format without unnecessary .0
-              let normalDisplay = formatHours(normal);
-              let extendedDisplay = formatHours(extended);
-              
-              if(normal>0 && extended>0) displayText = `${normalDisplay}+${extendedDisplay}`;
-              else if(normal>0) displayText = `${normalDisplay}`;
-              else displayText = `${extendedDisplay}ext`;
-              
-              if(entry.rateType === "holiday") { displayText += " 🎉+30%"; badge.classList.add("holiday"); }
-              else if(entry.rateType === "double") { displayText += " 💰2x"; badge.classList.add("holiday"); }
+              if(normal>0 && extended>0) displayText = `${formatHours(normal)}+${formatHours(extended)}`;
+              else if(normal>0) displayText = `${formatHours(normal)}`;
+              else displayText = `${formatHours(extended)}ext`;
+
+              if(entry.rateType === "holiday") { displayText += " 🎉"; badge.classList.add("holiday"); }
+              else if(entry.rateType === "double") { displayText += " 2x"; badge.classList.add("holiday"); }
               else if(extended>0) badge.classList.add("extended");
               else badge.classList.add("normal");
               badge.innerText = displayText;
-            } else { badge.innerText = "0 hrs"; badge.classList.add("normal"); }
+            } else { badge.innerText = "0h"; badge.classList.add("normal"); }
           }
           cellDiv.appendChild(badge);
         } else {
           const hint = document.createElement("div");
           hint.className = "edit-hint";
-          hint.innerText = "tap +";
+          hint.innerText = "+";
           cellDiv.appendChild(hint);
         }
         cellDiv.addEventListener("click", () => openModal(cell.year, cell.month, cell.day));
@@ -740,14 +834,12 @@
     const modal = document.getElementById("editModal");
     const normalInput = document.getElementById("normalHoursInput");
     const extendedInput = document.getElementById("extendedHoursInput");
-    const modalTitle = document.getElementById("modalDateLabel");
-    const modalSub = document.getElementById("modalDateSub");
 
     const openModal = (y,m,d) => {
       activeYear=y; activeMonth=m; activeDay=d;
       const dateObj = new Date(y,m,d);
-      modalTitle.innerText = `📅 ${dateObj.toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' })}`;
-      modalSub.innerText = `Set normal & extended hours`;
+      document.getElementById("modalDateLabel").innerText = `📅 ${dateObj.toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' })}`;
+      document.getElementById("modalDateSub").innerText = `Set normal & extended hours`;
       const existing = getEntry(y,m,d);
       if(existing && !existing.customLabel) {
         normalInput.value = existing.normalHours;
@@ -761,21 +853,18 @@
         document.querySelector('input[value="normal"]').checked = true;
       }
       modal.classList.add("active");
-      setTimeout(() => normalInput.focus(), 100);
+      setTimeout(() => normalInput.focus(), 150);
     };
     const closeModal = () => { modal.classList.remove("active"); activeYear=null; };
     const saveEntryHandler = () => {
       if(activeYear===null) return;
       let normal = parseFloat(normalInput.value) || 0;
       let extended = parseFloat(extendedInput.value) || 0;
-      if(isNaN(normal)) normal=0; if(isNaN(extended)) extended=0;
+      if(isNaN(normal)) normal=0;
+      if(isNaN(extended)) extended=0;
       const rate = document.querySelector('input[name="rateType"]:checked').value;
       if(normal===0 && extended===0) setEntry(activeYear, activeMonth, activeDay, null);
-      else {
-        setEntry(activeYear, activeMonth, activeDay, {
-          normalHours: normal, extendedHours: extended, rateType: rate, customLabel: null
-        });
-      }
+      else setEntry(activeYear, activeMonth, activeDay, { normalHours: normal, extendedHours: extended, rateType: rate, customLabel: null });
       closeModal();
     };
     const applyCode = (code) => {
@@ -785,17 +874,19 @@
       else if(code === "clear") setEntry(activeYear, activeMonth, activeDay, null);
       closeModal();
     };
-    const resetAll = () => { if(confirm("⚠️ ERASE ALL recorded entries? This will remove all hours, rates, RD/EA codes.")) { entriesMap.clear(); persist(); renderCalendar(); } };
+    const resetAll = () => {
+      if(confirm("⚠️ ERASE ALL recorded entries? This will remove all hours, rates, RD/EA codes.")) {
+        entriesMap.clear(); persist(); renderCalendar();
+      }
+    };
 
     const goPrev = () => { let nd = new Date(currentDisplayYear, currentDisplayMonth-1, 1); currentDisplayYear=nd.getFullYear(); currentDisplayMonth=nd.getMonth(); renderCalendar(); };
     const goNext = () => { let nd = new Date(currentDisplayYear, currentDisplayMonth+1, 1); currentDisplayYear=nd.getFullYear(); currentDisplayMonth=nd.getMonth(); renderCalendar(); };
     const goToday = () => { const n=new Date(); currentDisplayYear=n.getFullYear(); currentDisplayMonth=n.getMonth(); renderCalendar(); };
 
-    // SMOOTH THEME TOGGLE with transition class
     const initTheme = () => {
       const saved = localStorage.getItem('theme');
-      if(saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-      else document.documentElement.setAttribute('data-theme', 'light');
+      document.documentElement.setAttribute('data-theme', saved === 'dark' ? 'dark' : 'light');
       updateThemeIcon();
     };
     const toggleTheme = () => {
@@ -809,18 +900,15 @@
       const btn = document.getElementById('themeToggleBtn');
       if(btn) btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
     };
-    
-    // Show install prompt for iOS
+
     const showInstallPrompt = () => {
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
       if(isIOS && !isStandalone && !localStorage.getItem('installPromptDismissed')) {
-        setTimeout(() => {
-          document.getElementById('installPrompt').classList.add('show');
-        }, 3000);
+        setTimeout(() => document.getElementById('installPrompt').classList.add('show'), 3000);
       }
     };
-    
+
     document.addEventListener("DOMContentLoaded", () => {
       loadData();
       initTheme();
@@ -828,10 +916,12 @@
       currentDisplayYear = now.getFullYear();
       currentDisplayMonth = now.getMonth();
       renderCalendar();
+
       const themeDiv = document.createElement('div');
       themeDiv.className = 'theme-toggle';
       themeDiv.innerHTML = '<button class="theme-toggle-btn" id="themeToggleBtn">🌙</button>';
       document.body.appendChild(themeDiv);
+
       document.getElementById("themeToggleBtn").addEventListener("click", toggleTheme);
       document.getElementById("prevMonthBtn").addEventListener("click", goPrev);
       document.getElementById("nextMonthBtn").addEventListener("click", goNext);
@@ -841,12 +931,15 @@
       document.getElementById("cancelModalBtn").addEventListener("click", closeModal);
       modal.addEventListener("click", (e) => { if(e.target === modal) closeModal(); });
       document.querySelectorAll(".code-btn").forEach(btn => {
-        btn.addEventListener("click", (e) => { const code = btn.getAttribute("data-code"); if(code) applyCode(code); });
+        btn.addEventListener("click", () => { const code = btn.getAttribute("data-code"); if(code) applyCode(code); });
       });
       normalInput.addEventListener("keypress", (e) => { if(e.key === "Enter") saveEntryHandler(); });
       extendedInput.addEventListener("keypress", (e) => { if(e.key === "Enter") saveEntryHandler(); });
-      
+
       showInstallPrompt();
+
+      // Update icon after theme btn is added
+      updateThemeIcon();
     });
   </script>
 </body>
