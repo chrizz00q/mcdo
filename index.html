@@ -9,10 +9,14 @@
   <meta name="theme-color" content="#2c3e50">
   <meta name="description" content="Work hours tracker with salary calculator - smooth theme transitions">
   
-  <!-- PWA Manifest (inline) -->
-  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22SmartPay%20Work%20Logger%22,%22short_name%22:%22SmartPay%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22theme_color%22:%22#2c3e50%22,%22background_color%22:%22#ffffff%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Crect%20width%3D%27100%27%20height%3D%27100%27%20fill%3D%27%232c3e50%27/%3E%3Ctext%20x%3D%2750%27%20y%3D%2767%27%20font-size%3D%2750%27%20text-anchor%3D%27middle%27%20fill%3D%27%23ffffff%27%3ES%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22any%22,%22type%22:%22image/svg+xml%22}]}">
+  <!-- YOUR CUSTOM IMAGE ICON - Replace "icon.png" with your actual image filename -->
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="icon" type="image/png" href="icon.png">
   
-  <title>mcdo · Work Logger</title>
+  <!-- PWA Manifest with your custom image -->
+  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22SmartPay%20Work%20Logger%22,%22short_name%22:%22SmartPay%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22theme_color%22:%22#2c3e50%22,%22background_color%22:%22#ffffff%22,%22icons%22:[{%22src%22:%22icon.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
+  
+  <title>SmartPay · Work Logger</title>
   
   <style>
     /* ==================== RESET & GLOBAL ==================== */
@@ -498,7 +502,7 @@
   <div class="offline-status" id="offlineStatus">📴 Offline mode — data saved locally</div>
   <div class="install-prompt" id="installPrompt">
     📱 Install this app on your home screen for offline use!<br>
-    <button onclick="document.getElementById('installPrompt').classList.remove('show')">Got it</button>
+    <button onclick="document.getElementById('installPrompt').classList.remove('show');localStorage.setItem('installPromptDismissed','true')">Got it</button>
   </div>
   <div class="dashboard">
     <div class="calendar-card">
@@ -551,7 +555,8 @@
           const CACHE_NAME = 'smartpay-v1';
           const urlsToCache = [
             '/',
-            '/index.html'
+            '/index.html',
+            '/icon.png'
           ];
           
           self.addEventListener('install', event => {
