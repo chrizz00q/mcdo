@@ -1,0 +1,414 @@
+/* ---------- Card ---------- */
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+}
+
+.card--tight {
+  padding: var(--space-4);
+}
+
+/* ---------- Buttons — rectangular; no pill radius outside the switch ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: 40px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-flat);
+  border: 1px solid transparent;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast),
+    transform var(--transition-fast), color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn--primary {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+.btn--primary:hover:not(:disabled) {
+  background: var(--accent-strong);
+  color: #fff;
+}
+
+.btn--secondary {
+  background: var(--bg-elevated);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+.btn--secondary:hover:not(:disabled) {
+  background: var(--bg-elevated-hover);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+.btn--ghost:hover:not(:disabled) {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+.btn--danger {
+  background: transparent;
+  border-color: var(--status-double);
+  color: var(--status-double);
+}
+.btn--danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--status-double) 14%, transparent);
+}
+
+.btn--sm {
+  height: 32px;
+  padding: 0 var(--space-3);
+  font-size: 0.8rem;
+}
+
+.btn--icon {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.btn--block {
+  width: 100%;
+}
+
+/* ---------- Icon toggle button (theme etc) ---------- */
+.icon-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-flat);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+.icon-toggle:hover {
+  background: var(--bg-elevated-hover);
+}
+.icon-toggle:active {
+  transform: scale(0.94);
+}
+
+/* ---------- Inputs ---------- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.field label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.field__error {
+  font-size: 0.76rem;
+  color: var(--status-double);
+}
+
+.input,
+.select,
+.textarea {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  padding: 0 var(--space-3);
+  height: 40px;
+  font-size: 0.9rem;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  width: 100%;
+}
+
+.textarea {
+  height: auto;
+  padding: var(--space-2) var(--space-3);
+  min-height: 72px;
+  resize: vertical;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 24%, transparent);
+  outline: none;
+}
+
+.input--invalid {
+  border-color: var(--status-double);
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+@media (max-width: 480px) {
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Badge / status tag ---------- */
+/* Square ink-stamp tags rather than circular UI bullets */
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.status-dot--normal { background: var(--status-normal); }
+.status-dot--night { background: var(--status-night); }
+.status-dot--holiday { background: var(--status-holiday); }
+.status-dot--double { background: var(--status-double); }
+.status-dot--restday { background: var(--status-restday); }
+.status-dot--excused { background: var(--status-excused); }
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px dashed var(--border-strong);
+}
+.legend-row:last-child {
+  border-bottom: none;
+}
+
+.legend-row__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.85rem;
+}
+.legend-row__label small {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  font-weight: 400;
+}
+.legend-row__value {
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Toggle switch — the one deliberate pill in the whole system ---------- */
+.switch {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  border-radius: var(--radius-pill);
+  background: var(--border-strong);
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--transition-fast);
+}
+.switch[data-on='true'] {
+  background: var(--accent);
+}
+.switch__thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+.switch[data-on='true'] .switch__thumb {
+  transform: translateX(18px);
+}
+
+/* ---------- Empty state ---------- */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+  color: var(--text-muted);
+}
+.empty-state svg {
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+.empty-state strong {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed;
+  bottom: var(--space-5);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-flat);
+  box-shadow: var(--shadow-lg);
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  animation: toast-in 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translate(-50%, 10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ---------- Summary card ---------- */
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.summary-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.summary-card__icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.summary-card__icon--accent {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  color: var(--accent-strong);
+}
+.summary-card__value {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.summary-card__label {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+.summary-card__meta {
+  color: var(--text-muted);
+  font-size: 0.74rem;
+}
+
+/* One continuous payslip stub instead of separate shadowed cards: each
+   direct child becomes a dashed-divider segment of a single panel. This
+   assumes each summary metric is rendered as a direct child of
+   .summary-grid (e.g. a .card or .summary-card element) — if your markup
+   wraps them another level deeper, move the ">" rules down a level. */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  position: relative;
+  overflow: hidden;
+  --scallop: 18px;
+  -webkit-mask-image:
+    linear-gradient(#000, #000),
+    radial-gradient(circle at 50% 100%, #000 calc(var(--scallop) / 2), transparent calc(var(--scallop) / 2 + 0.5px));
+  -webkit-mask-size: 100% 100%, var(--scallop) var(--scallop);
+  -webkit-mask-repeat: no-repeat, repeat-x;
+  -webkit-mask-position: top left, bottom left;
+  -webkit-mask-composite: source-over, destination-out;
+  mask-image:
+    linear-gradient(#000, #000),
+    radial-gradient(circle at 50% 100%, #000 calc(var(--scallop) / 2), transparent calc(var(--scallop) / 2 + 0.5px));
+  mask-size: 100% 100%, var(--scallop) var(--scallop);
+  mask-repeat: no-repeat, repeat-x;
+  mask-position: top left, bottom left;
+  mask-composite: add, subtract;
+}
+/* Perforation strip along the top, like a tear-off payslip stub */
+.summary-grid::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: repeating-linear-gradient(to right, var(--accent) 0 8px, transparent 8px 16px);
+  opacity: 0.55;
+  z-index: 1;
+}
+.summary-grid > * {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: var(--space-5) var(--space-4);
+  border-left: 1px dashed var(--border-strong);
+}
+.summary-grid > *:first-child {
+  border-left: none;
+}
+@media (max-width: 640px) {
+  .summary-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .summary-grid > * {
+    padding: var(--space-4);
+  }
+}
+
+.cutoff-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+@media (max-width: 480px) {
+  .cutoff-grid {
+    grid-template-columns: 1fr;
+  }
+}
